@@ -175,3 +175,72 @@ class M3EIconButton extends StatelessWidget {
     );
   }
 }
+
+/// A filled-style M3EIconButton.
+class M3EFilledIconButton extends M3EIconButton {
+  const M3EFilledIconButton({
+    super.key,
+    required super.onPressed,
+    required super.icon,
+    super.size,
+    super.shape,
+    super.enabled,
+    super.statesController,
+    super.decoration,
+    super.focusNode,
+    super.autofocus,
+    super.onFocusChange,
+    super.semanticLabel,
+    super.tooltip,
+    super.mouseCursor,
+    super.onLongPress,
+    super.onHover,
+    super.enableFeedback,
+    super.splashFactory,
+  }) : super(style: M3EButtonStyle.filled);
+
+  const M3EFilledIconButton.tonal({
+    super.key,
+    required super.onPressed,
+    required super.icon,
+    super.size,
+    super.shape,
+    super.enabled,
+    super.statesController,
+    super.decoration,
+    super.focusNode,
+    super.autofocus,
+    super.onFocusChange,
+    super.semanticLabel,
+    super.tooltip,
+    super.mouseCursor,
+    super.onLongPress,
+    super.onHover,
+    super.enableFeedback,
+    super.splashFactory,
+  }) : super(style: M3EButtonStyle.tonal);
+}
+
+/// A outlined-style M3EIconButton.
+class M3EOutlinedIconButton extends M3EIconButton {
+  const M3EOutlinedIconButton({
+    super.key,
+    required super.onPressed,
+    required super.icon,
+    super.size,
+    super.shape,
+    super.enabled,
+    super.statesController,
+    super.decoration,
+    super.focusNode,
+    super.autofocus,
+    super.onFocusChange,
+    super.semanticLabel,
+    super.tooltip,
+    super.mouseCursor,
+    super.onLongPress,
+    super.onHover,
+    super.enableFeedback,
+    super.splashFactory,
+  }) : super(style: M3EButtonStyle.outlined);
+}
