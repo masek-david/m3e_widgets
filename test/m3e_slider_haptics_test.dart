@@ -6,7 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

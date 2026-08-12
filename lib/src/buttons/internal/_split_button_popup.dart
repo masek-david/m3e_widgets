@@ -12,7 +12,6 @@ Future<T?> showSplitButtonPopup<T>({
   required BuildContext context,
   required List<M3ESplitButtonItem<T>> items,
   required M3ESplitButtonPopupDecoration decoration,
-  required Color foregroundColor,
   required double iconSize,
   required RenderBox triggerRenderBox,
   FocusNode? callerFocusNode,
@@ -25,7 +24,6 @@ Future<T?> showSplitButtonPopup<T>({
   overlayEntry = OverlayEntry(
     builder: (context) => _PopupOverlay<T>(
       items: items,
-      foregroundColor: foregroundColor,
       iconSize: iconSize,
       decoration: decoration,
       triggerRenderBox: triggerRenderBox,
@@ -51,7 +49,6 @@ Future<T?> showSplitButtonPopup<T>({
 class _PopupOverlay<T> extends StatefulWidget {
   const _PopupOverlay({
     required this.items,
-    required this.foregroundColor,
     required this.iconSize,
     required this.decoration,
     required this.triggerRenderBox,
@@ -63,7 +60,6 @@ class _PopupOverlay<T> extends StatefulWidget {
   });
 
   final List<M3ESplitButtonItem<T>> items;
-  final Color foregroundColor;
   final double iconSize;
   final M3ESplitButtonPopupDecoration decoration;
   final RenderBox triggerRenderBox;
@@ -204,9 +200,9 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: _dismiss,
-                  child: Container(
-                    color: theme.colorScheme.scrim.withValues(alpha: 0.26),
-                  ),
+                  // child: Container(
+                  //   color: theme.colorScheme.scrim.withValues(alpha: 0.26),
+                  // ),
                 ),
               ),
               Positioned(
@@ -248,7 +244,7 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
                             elevation: widget.decoration.elevation ?? 3,
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                                  widget.decoration.borderRadius ??
+                                  widget.decoration.backgroundBorderRadius ??
                                   BorderRadius.circular(18),
                               side: BorderSide.none,
                             ),
@@ -291,14 +287,35 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
 
     final isSelected =
         widget.selectedValue != null && widget.selectedValue == item.value;
+    final foregroundColor = isSelected
+        ? widget.decoration.selectedForegroundColor
+        : widget.decoration.foregroundColor;
+
     final effectiveColor = item.enabled
-        ? widget.foregroundColor
-        : widget.foregroundColor.withValues(
+        ? foregroundColor
+        : foregroundColor?.withValues(
             alpha: ButtonConstants.kDisabledForegroundAlpha,
           );
 
     Widget child;
-    if (item.child is IconData) {
+    if (item.label != null || item.icon != null) {
+      child = Row(
+        children: [
+          if (item.icon != null)
+            Icon(item.icon, size: 20, color: effectiveColor),
+          SizedBox(width: 8),
+          if (item.label != null)
+            Text(
+              item.label!,
+              style:
+                  Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(color: effectiveColor) ??
+                  TextStyle(fontSize: 14),
+            ),
+        ],
+      );
+    } else if (item.child is IconData) {
       child = Row(
         children: [
           Icon(
@@ -316,7 +333,14 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
         ],
       );
     } else if (item.child is Widget) {
-      child = item.child as Widget;
+      child = DefaultTextStyle(
+        style:
+            Theme.of(
+              context,
+            ).textTheme.labelLarge?.copyWith(color: effectiveColor) ??
+            TextStyle(fontSize: 14),
+        child: item.child as Widget,
+      );
     } else {
       child = Text(
         item.child.toString(),
@@ -327,13 +351,14 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
     }
 
     final borderRadius =
-        widget.decoration.selectedBorderRadius ??
-        widget.decoration.borderRadius ??
+        (isSelected
+            ? widget.decoration.selectedBorderRadius
+            : widget.decoration.borderRadius) ??  
         BorderRadius.circular(18);
 
     final bgColor = isSelected
-        ? (widget.decoration.selectedColor ??
-              effectiveColor.withValues(
+        ? (widget.decoration.selectedBackgroundColor ??
+              effectiveColor?.withValues(
                 alpha: ButtonConstants.kDisabledBackgroundAlpha,
               ))
         : Colors.transparent;
@@ -358,20 +383,7 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
               : null,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              children: [
-                Expanded(child: child),
-                if (isSelected)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Icon(
-                      Icons.check_rounded,
-                      size: widget.iconSize * 0.9,
-                      color: effectiveColor,
-                    ),
-                  ),
-              ],
-            ),
+            child: child,
           ),
         ),
       ),

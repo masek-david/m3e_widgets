@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 import 'button_helpers.dart';
 
@@ -158,7 +158,6 @@ class SplitButtonTab extends StatelessWidget {
             runSpacing: 10,
             children: [
               M3ESplitButton<String>(
-                shape: M3EButtonShape.round,
                 label: 'Round',
                 items: const [
                   M3ESplitButtonItem(
@@ -174,7 +173,6 @@ class SplitButtonTab extends StatelessWidget {
                 onSelected: (_) {},
               ),
               M3ESplitButton<String>(
-                shape: M3EButtonShape.square,
                 label: 'Square',
                 items: const [
                   M3ESplitButtonItem(
@@ -993,7 +991,7 @@ class _SelectionStateExampleState extends State<_SelectionStateExample> {
         M3ESplitButton<String>(
           decoration: M3ESplitButtonDecoration(
             popupDecoration: M3ESplitButtonPopupDecoration(
-              selectedColor: cs.primaryContainer,
+              selectedBackgroundColor: cs.primaryContainer,
               selectedBorderRadius: const BorderRadius.all(Radius.circular(12)),
             ),
           ),

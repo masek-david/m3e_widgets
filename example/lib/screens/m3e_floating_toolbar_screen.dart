@@ -1,6 +1,7 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:motor/motor.dart';
 
 class FloatingToolbarM3EScreen extends StatefulWidget {

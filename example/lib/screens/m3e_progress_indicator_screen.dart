@@ -4,7 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 class M3EProgressIndicatorScreen extends StatefulWidget {
   const M3EProgressIndicatorScreen({super.key});
@@ -24,6 +24,8 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
   double _waveSpeed = 20.0;
   bool _autoAnimate = false;
   bool _isRtl = false;
+  bool _isDeterminate = true;
+  bool _isWavy = true;
   late AnimationController _progressAnimationController;
 
   @override
@@ -68,14 +70,79 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
         backgroundColor: cs.inversePrimary,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         children: [
+          Row(
+            children: [
+              Expanded(
+                child: Slider(
+                  year2023: false,
+                  value: _determinateProgress,
+                  onChanged: _autoAnimate
+                      ? null
+                      : (val) {
+                          setState(() => _determinateProgress = val);
+                        },
+                ),
+              ),
+              Text('${(_determinateProgress * 100).round()}%'),
+            ],
+          ),
+          SizedBox(height: 16),
+          M3ELinearWavyProgressIndicator(
+            value: _isDeterminate ? _determinateProgress : null,
+          ),
+          Row(
+            spacing: 16,
+            mainAxisAlignment: .center,
+            children: [
+              CircularProgressIndicator(
+                value: _isDeterminate ? _determinateProgress : null,
+              ),
+              M3ECircularProgressIndicator(
+                shape: _isWavy ? .wavy : .flat,
+                value: _isDeterminate ? _determinateProgress : null,
+              ),
+            ],
+          ),
+          SizedBox(height: 32),
+
           // ── Controls Card ──
           _buildDemoSection(
             title: 'Interactive Controls',
             subtitle: 'Adjust progress and visual properties of the indicators',
             child: Column(
               children: [
+                Row(
+                  children: [
+                    const SizedBox(width: 100, child: Text('Is Wavy:')),
+                    Switch(
+                      value: _isWavy,
+                      onChanged: (val) {
+                        setState(() {
+                          _isWavy = val;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_isWavy ? 'Wavy' : 'Flat'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const SizedBox(width: 100, child: Text('Is determinate:')),
+                    Switch(
+                      value: _isDeterminate,
+                      onChanged: (val) {
+                        setState(() {
+                          _isDeterminate = val;
+                        });
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_isDeterminate ? 'Determinate' : 'Indeterminate'),
+                  ],
+                ),
                 Row(
                   children: [
                     const SizedBox(width: 100, child: Text('RTL Layout:')),
@@ -199,7 +266,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                     Expanded(
                       child: Slider(
                         value: _waveSpeed,
-                        min: 0.0,
+                        min: 0.0001,
                         max: 40.0,
                         onChanged: (val) {
                           setState(() => _waveSpeed = val);
@@ -213,7 +280,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
 
           // ── Linear Progress Indicators ──
           _buildDemoSection(
@@ -234,13 +301,12 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                     stopSize: _stopSize,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 8),
                 const Text('Indeterminate Standard:'),
                 const SizedBox(height: 8),
                 Directionality(
                   textDirection: _isRtl ? TextDirection.rtl : TextDirection.ltr,
                   child: M3ELinearProgressIndicator(
-                    value: null,
                     minHeight: _strokeWidth,
                     gapSize: _gapSize,
                   ),
@@ -249,7 +315,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
 
           // ── Linear Wavy Progress Indicators ──
           _buildDemoSection(
@@ -274,13 +340,12 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                     waveSpeed: _waveSpeed,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 8),
                 const Text('Indeterminate Wavy:'),
                 const SizedBox(height: 8),
                 Directionality(
                   textDirection: _isRtl ? TextDirection.rtl : TextDirection.ltr,
                   child: M3ELinearWavyProgressIndicator(
-                    value: null,
                     strokeWidth: _strokeWidth,
                     width: double.infinity,
                     trackStrokeWidth: _strokeWidth * 0.75,
@@ -293,7 +358,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
 
           // ── Circular Progress Indicators ──
           _buildDemoSection(
@@ -314,8 +379,9 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                               ? TextDirection.rtl
                               : TextDirection.ltr,
                           child: M3ECircularProgressIndicator(
+                            shape: .flat,
                             value: _determinateProgress,
-                            strokeWidth: _strokeWidth,
+                            thickness: _strokeWidth,
                             gapSize: _gapSize,
                           ),
                         ),
@@ -330,8 +396,8 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                               ? TextDirection.rtl
                               : TextDirection.ltr,
                           child: M3ECircularProgressIndicator(
-                            value: null,
-                            strokeWidth: _strokeWidth,
+                            shape: .flat,
+                            thickness: _strokeWidth,
                             gapSize: _gapSize,
                           ),
                         ),
@@ -343,7 +409,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
             ),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
 
           // ── Circular Wavy Progress Indicators ──
           _buildDemoSection(
@@ -364,9 +430,9 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                           textDirection: _isRtl
                               ? TextDirection.rtl
                               : TextDirection.ltr,
-                          child: M3ECircularWavyProgressIndicator(
+                          child: M3ECircularProgressIndicator(
                             value: _determinateProgress,
-                            strokeWidth: _strokeWidth,
+                            thickness: _strokeWidth,
                             gapSize: _gapSize,
                             wavelength: _wavelength,
                             waveSpeed: _waveSpeed,
@@ -382,9 +448,8 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                           textDirection: _isRtl
                               ? TextDirection.rtl
                               : TextDirection.ltr,
-                          child: M3ECircularWavyProgressIndicator(
-                            value: null,
-                            strokeWidth: _strokeWidth,
+                          child: M3ECircularProgressIndicator(
+                            thickness: _strokeWidth,
                             gapSize: _gapSize,
                             wavelength: _wavelength,
                             waveSpeed: _waveSpeed,
@@ -415,7 +480,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
       color: cs.surfaceContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -432,7 +497,7 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
                 context,
               ).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             child,
           ],
         ),

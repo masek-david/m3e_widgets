@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:m3e_core/src/shapes/clipper.dart';
-import 'package:m3e_core/src/shapes/enums/shapes.dart';
+import 'package:m3e_widgets/src/shapes/clipper.dart';
+import 'package:m3e_widgets/src/shapes/enums/shapes.dart';
 
 /// A custom ShapeBorder implementation that applies borders to M3E shapes.
 ///

@@ -49,12 +49,10 @@ class RenderHorizontalFabLayout extends RenderBox
         ContainerRenderObjectMixin<RenderBox, FabLayoutParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, FabLayoutParentData> {
   RenderHorizontalFabLayout({
-    required double progress,
-    required M3EFloatingToolbarHorizontalFabPosition fabPosition,
-    required bool isRtl,
-  }) : _progress = progress,
-       _fabPosition = fabPosition,
-       _isRtl = isRtl;
+    required this._progress,
+    required this._fabPosition,
+    required this._isRtl,
+  });
 
   double _progress;
   M3EFloatingToolbarHorizontalFabPosition _fabPosition;
@@ -267,10 +265,9 @@ class RenderVerticalFabLayout extends RenderBox
         ContainerRenderObjectMixin<RenderBox, FabLayoutParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, FabLayoutParentData> {
   RenderVerticalFabLayout({
-    required double progress,
-    required M3EFloatingToolbarVerticalFabPosition fabPosition,
-  }) : _progress = progress,
-       _fabPosition = fabPosition;
+    required this._progress,
+    required this._fabPosition,
+  });
 
   double _progress;
   M3EFloatingToolbarVerticalFabPosition _fabPosition;

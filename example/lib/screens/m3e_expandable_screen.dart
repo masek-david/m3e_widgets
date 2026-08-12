@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+
 import '../data/mock_data.dart';
 
 class ExpandableM3EScreen extends StatefulWidget {

@@ -1,303 +1,533 @@
-// Copyright (c) 2026 Mudit Purohit
-//
-// This source code is licensed under the MIT license found in the
-// LICENSE file in the root directory of this source tree.
+// ignore_for_file: unused_element_parameter
 
 import 'dart:math' as math;
-import 'dart:ui' show lerpDouble;
+import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'm3e_progress_indicator_defaults.dart';
+import 'package:m3e_widgets/src/shapes/polygon/shapes.dart';
 
-/// A Material 3 Expressive circular progress indicator.
-///
-/// Progress indicators express an unspecified wait time or display the duration
-/// of a process.
-///
-/// If [value] is null, this progress indicator is indeterminate, which means
-/// it animates continuously to show that a process is ongoing.
-/// If [value] is non-null, it is determinate and displays the progress.
-class M3ECircularProgressIndicator extends StatefulWidget {
-  /// The progress value, between 0.0 and 1.0.
-  /// If null, the indicator is indeterminate.
-  final double? value;
+class _Defaults {
+  static const defaultWavySize = 48.0;
+  static const defaultSize = 40.0;
+  static const minSize = 24.0;
+  static const maxSize = 240.0;
 
-  /// The color of the active progress indicator.
-  final Color? color;
+  static const defaultThickness = 4.0;
+  static const defaultGapSize = 4.0;
+  static double Function(double progress) defaultAmplitude = (progress) {
+    // Sets the amplitude to the max on 10%, and back to zero on 95% of the progress.
+    if (progress <= 0.1 || progress >= 0.95) {
+      return 0;
+    } else {
+      return 1;
+    }
+  };
+  static const defaultWavelength = 15.0;
+  static const amplitudeAnimationDuration = Duration(milliseconds: 500);
+  static const amplitudeAnimationIncreaseCurve = Easing.standard;
+  static const amplitudeAnimationDecreaseCurve = Easing.emphasizedAccelerate;
 
-  /// The background color of the track.
-  final Color? backgroundColor;
+  static const minCircularVertexCount =
+      5; // from CircularWavyProgressModifiers.kt
 
-  /// The stroke width of the indicator's path.
-  final double strokeWidth;
+  static const progresssAnimationDuration = Duration(milliseconds: 500);
+  static const indeterminateAnimationDuration = Duration(milliseconds: 6000);
+}
 
-  /// The stroke cap style for the ends of the progress indicator.
-  final StrokeCap strokeCap;
+enum M3EProgressIndicatorShape { flat, wavy }
 
-  /// The gap size between the active progress and the track.
-  final double gapSize;
-
-  /// The size/diameter of the indicator.
-  final double size;
-
+class M3ECircularProgressIndicator extends StatelessWidget {
   const M3ECircularProgressIndicator({
     super.key,
     this.value,
-    this.color,
-    this.backgroundColor,
-    this.strokeWidth = M3EProgressIndicatorDefaults.circularStrokeWidth,
-    this.strokeCap = StrokeCap.round,
-    this.gapSize = M3EProgressIndicatorDefaults.circularIndicatorTrackGapSize,
-    this.size = M3EProgressIndicatorDefaults.circularContainerSize,
-  });
+    this.activeColor,
+    this.trackColor,
+    this.gapSize = _Defaults.defaultGapSize,
+    this.thickness = _Defaults.defaultThickness,
+    this.wavelength = _Defaults.defaultWavelength,
+    this.waveSpeed = _Defaults.defaultWavelength,
+    this.amplitude,
+    this.size,
+    this.shape = .wavy,
+    this.animateProgres = true,
+  }) : assert(
+         (size ?? 24) >= _Defaults.minSize && (size ?? 24) <= _Defaults.maxSize,
+       );
+
+  final double? value;
+  final double Function(double progress)? amplitude;
+  final double thickness;
+  final double wavelength;
+
+  /// By default the same as [wavelength] -> it takes 1 second to travel 1 wave
+  final double waveSpeed;
+  final double? size;
+  final double gapSize;
+  final Color? activeColor;
+  final Color? trackColor;
+  // The progress will be animated = won't jump the values but animate between them
+  final bool animateProgres;
+  final M3EProgressIndicatorShape shape;
 
   @override
-  State<M3ECircularProgressIndicator> createState() =>
-      _M3ECircularProgressIndicatorState();
+  Widget build(BuildContext context) {
+    final isWavy = shape == .wavy;
+    final finalSize =
+        size ?? (isWavy ? _Defaults.defaultWavySize : _Defaults.defaultSize);
+    final finalAmplitude =
+        amplitude ?? (isWavy ? _Defaults.defaultAmplitude : (_) => 0);
+
+    if (value != null) {
+      return _CircularProgressIndicator(
+        animateProgres: animateProgres,
+        value: value!,
+        wavelength: wavelength,
+        waveSpeed: waveSpeed,
+        trackColor: trackColor,
+        thickness: thickness,
+        size: finalSize,
+        gapSize: gapSize,
+        amplitude: finalAmplitude,
+        activeColor: activeColor,
+      );
+    } else {
+      return _CircularLoadingIndicator(
+        wavelength: wavelength,
+        waveSpeed: waveSpeed,
+        trackColor: trackColor,
+        thickness: thickness,
+        size: finalSize,
+        gapSize: gapSize,
+        amplitude: finalAmplitude,
+        activeColor: activeColor,
+      );
+    }
+  }
 }
 
-class _M3ECircularProgressIndicatorState
-    extends State<M3ECircularProgressIndicator>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+/// Indeterminate loading indicator that can display progress as a wave
+class _CircularLoadingIndicator extends StatefulWidget {
+  const _CircularLoadingIndicator({
+    super.key,
+    required this.activeColor,
+    required this.trackColor,
+    required this.gapSize,
+    required this.thickness,
+    required this.wavelength,
+    required this.waveSpeed,
+    required this.amplitude,
+    required this.size,
+  });
+
+  final double Function(double progress) amplitude;
+  final double thickness;
+  final double wavelength;
+  final double waveSpeed;
+  final double size;
+  final double gapSize;
+  final Color? activeColor;
+  final Color? trackColor;
+
+  @override
+  State<_CircularLoadingIndicator> createState() =>
+      _CircularLoadingIndicatorState();
+}
+
+class _CircularLoadingIndicatorState extends State<_CircularLoadingIndicator>
+    with TickerProviderStateMixin {
+  late final _globalController = AnimationController(
+    vsync: this,
+    duration: _Defaults.indeterminateAnimationDuration,
+  );
+
+  // the jetpack compose implementation uses some deccelerate curve, but it doesnt look right here
+  late final _additionalAnimation = TweenSequence<double>([
+    TweenSequenceItem(tween: Tween<double>(begin: 0, end: 0.25), weight: 300),
+    TweenSequenceItem(tween: ConstantTween(0.25), weight: 1200),
+    TweenSequenceItem(tween: Tween<double>(begin: 0.25, end: 0.5), weight: 300),
+    TweenSequenceItem(tween: ConstantTween(0.5), weight: 1200),
+    TweenSequenceItem(tween: Tween<double>(begin: 0.5, end: 0.75), weight: 300),
+    TweenSequenceItem(tween: ConstantTween(0.75), weight: 1200),
+    TweenSequenceItem(tween: Tween<double>(begin: 0.75, end: 1), weight: 300),
+    TweenSequenceItem(tween: ConstantTween(1), weight: 1200),
+  ]).animate(_globalController);
+
+  final sweepCurve = Easing.standard;
+  final sweepMin = 0.1;
+  final sweepMax = 0.87;
+  late final _progressSweepAnimation = TweenSequence<double>([
+    TweenSequenceItem(
+      tween: Tween<double>(begin: sweepMin, end: sweepMax),
+      weight: 3000,
+    ),
+    TweenSequenceItem(
+      tween: Tween<double>(
+        begin: sweepMax,
+        end: sweepMin,
+      ).chain(CurveTween(curve: sweepCurve)),
+      weight: 3000,
+    ),
+  ]).animate(_globalController);
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 6),
-    );
-    if (widget.value == null) {
-      _animationController.repeat();
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant M3ECircularProgressIndicator oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.value == null &&
-        !oldWidget.value.runtimeType.toString().contains('Null')) {
-      if (!_animationController.isAnimating) {
-        _animationController.repeat();
-      }
-    } else if (widget.value != null) {
-      _animationController.stop();
-    }
+    _globalController.repeat();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _globalController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final activeColor =
-        widget.color ?? M3EProgressIndicatorDefaults.activeColor(context);
-    final trackColor =
-        widget.backgroundColor ??
-        M3EProgressIndicatorDefaults.trackColor(context);
-
-    return SizedBox(
-      width: widget.size,
-      height: widget.size,
-      child: widget.value != null
-          ? CustomPaint(
-              painter: _CircularProgressPainter(
-                progress: widget.value!.clamp(0.0, 1.0),
-                color: activeColor,
-                trackColor: trackColor,
-                strokeWidth: widget.strokeWidth,
-                strokeCap: widget.strokeCap,
-                gapSize: widget.gapSize,
-                isLtr: Directionality.of(context) == TextDirection.ltr,
-              ),
-            )
-          : AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: _CircularProgressPainter(
-                    progress: null,
-                    animationValue: _animationController.value,
-                    color: activeColor,
-                    trackColor: trackColor,
-                    strokeWidth: widget.strokeWidth,
-                    strokeCap: widget.strokeCap,
-                    gapSize: widget.gapSize,
-                    isLtr: Directionality.of(context) == TextDirection.ltr,
-                  ),
-                );
-              },
-            ),
+    return AnimatedBuilder(
+      animation: _globalController,
+      builder: (context, _) {
+        return Transform.rotate(
+          angle:
+              (0.25 +
+                  _globalController.value * 3 +
+                  _additionalAnimation.value) *
+              2 *
+              pi,
+          child: _CircularProgressIndicator(
+            value: _progressSweepAnimation.value,
+            gapSize: widget.gapSize,
+            amplitude: widget.amplitude,
+            wavelength: widget.wavelength,
+            thickness: widget.thickness,
+            size: widget.size,
+            waveSpeed: widget.waveSpeed,
+            animateProgres: false,
+            activeColor:
+                widget.activeColor ?? Theme.of(context).colorScheme.primary,
+            trackColor:
+                widget.trackColor ??
+                Theme.of(context).colorScheme.secondaryContainer,
+          ),
+        );
+      },
     );
   }
 }
 
-class _CircularProgressPainter extends CustomPainter {
-  final double? progress;
-  final double? animationValue;
-  final Color color;
-  final Color trackColor;
-  final double strokeWidth;
-  final StrokeCap strokeCap;
-  final double gapSize;
-  final bool isLtr;
-
-  static const Curve _decelerateEasing = Cubic(0.05, 0.7, 0.1, 1.0);
-
-  _CircularProgressPainter({
-    required this.progress,
-    this.animationValue,
-    required this.color,
+class _CircularProgressIndicator extends StatefulWidget {
+  const _CircularProgressIndicator({
+    super.key,
+    required this.value,
+    required this.activeColor,
     required this.trackColor,
-    required this.strokeWidth,
-    required this.strokeCap,
     required this.gapSize,
-    required this.isLtr,
+    required this.thickness,
+    required this.wavelength,
+    required this.waveSpeed,
+    required this.amplitude,
+    required this.size,
+    required this.animateProgres,
   });
 
-  void _drawArc(
-    Canvas canvas,
-    double startAngleDegrees,
-    double sweepAngleDegrees,
-    Color paintColor,
-    Size size,
-    Paint paint,
-  ) {
-    paint.color = paintColor;
+  final double value;
+  final double Function(double progress) amplitude;
+  final double thickness;
+  final double wavelength;
+  final double waveSpeed;
+  final double size;
+  final double gapSize;
+  final Color? activeColor;
+  final Color? trackColor;
+  final bool animateProgres;
 
-    final double diameterOffset = strokeWidth / 2;
-    final double arcWidth = size.width - 2 * diameterOffset;
-    final double arcHeight = size.height - 2 * diameterOffset;
+  @override
+  State<_CircularProgressIndicator> createState() =>
+      _CircularProgressIndicatorState();
+}
 
-    // Convert degrees to radians
-    final double startAngleRadians = startAngleDegrees * math.pi / 180;
-    final double sweepAngleRadians = sweepAngleDegrees * math.pi / 180;
+class _CircularProgressIndicatorState extends State<_CircularProgressIndicator>
+    with TickerProviderStateMixin {
+  /// The faze controller controlls how long it takes to rotate by one wave
+  late AnimationController _fazeController;
+  late final _amplitudeController = AnimationController(
+    value: widget.amplitude(widget.value),
+    vsync: this,
+    duration: _Defaults.amplitudeAnimationDuration,
+  );
+  late final _progressController = AnimationController(
+    vsync: this,
+    value: widget.value,
+    duration: _Defaults.progresssAnimationDuration,
+  );
 
-    canvas.drawArc(
-      Rect.fromLTWH(diameterOffset, diameterOffset, arcWidth, arcHeight),
-      startAngleRadians,
-      sweepAngleRadians,
-      false,
-      paint,
+  late double oldProgress = widget.value;
+
+  @override
+  void initState() {
+    super.initState();
+    updateFazeController();
+  }
+
+  void updateFazeController() {
+    // * 2 because we have two waves - (repeatPath: true)
+    late var fazeDuration = ((widget.wavelength / widget.waveSpeed) * 1000 * 2)
+        .clamp(50, double.infinity)
+        .round();
+
+    _fazeController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: fazeDuration),
     );
+
+    _fazeController.repeat();
+  }
+
+  @override
+  void didUpdateWidget(covariant _CircularProgressIndicator oldWidget) {
+    if (oldWidget.waveSpeed != widget.waveSpeed ||
+        oldWidget.wavelength != widget.wavelength) {
+      updateFazeController();
+    }
+
+    if (oldWidget.amplitude != widget.amplitude) {
+      updateAmplitude();
+    }
+    if (oldWidget.value != widget.value) {
+      updateProgress();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    _fazeController.dispose();
+    _progressController.dispose();
+    _amplitudeController.dispose();
+    super.dispose();
+  }
+
+  void updateProgress() {
+    if (widget.animateProgres) {
+      _progressController.animateTo(widget.value);
+    } else {
+      _progressController.value = widget.value;
+    }
+  }
+
+  void updateAmplitude() {
+    if (widget.amplitude(_progressController.value) == 0) {
+      if (_amplitudeController.status != .reverse &&
+          _amplitudeController.value != 0) {
+        _amplitudeController.animateBack(
+          0,
+          curve: _Defaults.amplitudeAnimationDecreaseCurve,
+        );
+      }
+    } else {
+      if (_amplitudeController.status != .forward &&
+          _amplitudeController.value != 1) {
+        _amplitudeController.animateTo(
+          1,
+          curve: _Defaults.amplitudeAnimationIncreaseCurve,
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _fazeController,
+        _progressController,
+        _amplitudeController,
+      ]),
+      builder: (context, _) {
+        if (oldProgress != _progressController.value) {
+          updateAmplitude();
+        }
+        oldProgress = _progressController.value;
+
+        return CustomPaint(
+          size: Size.square(widget.size),
+          painter: _WavyCircularProgressIndicatorPainter(
+            gapSize: widget.gapSize,
+            amplitude: _amplitudeController.value,
+            wavelength: widget.wavelength,
+            strokeWidth: widget.thickness,
+            activeColor:
+                widget.activeColor ?? Theme.of(context).colorScheme.primary,
+            trackColor:
+                widget.trackColor ??
+                Theme.of(context).colorScheme.secondaryContainer,
+            faze: _fazeController.value,
+            progress: _progressController.value,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _WavyCircularProgressIndicatorPainter extends CustomPainter {
+  final Color activeColor;
+  final Color trackColor;
+  final double strokeWidth;
+  final double amplitude;
+  final double wavelength;
+  final double progress;
+  final double faze;
+  final double gapSize;
+
+  _WavyCircularProgressIndicatorPainter({
+    required this.amplitude,
+    required this.wavelength,
+    required this.activeColor,
+    required this.trackColor,
+    required this.strokeWidth,
+    required this.progress,
+    required this.faze,
+    required this.gapSize,
+  });
+
+  Float64List _getTransform(
+    double scale,
+    double angleRadians,
+    double xCenter,
+    double yCenter,
+  ) {
+    final double cosA = math.cos(angleRadians);
+    final double sinA = math.sin(angleRadians);
+
+    return Float64List.fromList([
+      // Column 0
+      scale * cosA,
+      scale * sinA,
+      0.0,
+      0.0,
+
+      // Column 1
+      scale * -sinA,
+      scale * cosA,
+      0.0,
+      0.0,
+
+      // Column 2
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+
+      // Column 3 (Translation)
+      xCenter, // Moves it to your desired X
+      yCenter, // Moves it to your desired Y
+      0.0,
+      1.0,
+    ]);
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
+    final activePaint = Paint()
+      ..color = activeColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = strokeCap;
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = strokeWidth;
+    final trackPaint = Paint()
+      ..color = trackColor
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = strokeWidth;
 
-    final double adjustedGapSize = strokeCap == StrokeCap.butt
-        ? gapSize
-        : gapSize + strokeWidth;
+    final yCenter = size.height / 2;
+    final xCenter = size.width / 2;
 
-    // gap size sweep angle in degrees: gapSize / (PI * diameter) * 360
-    final double gapSizeSweep =
-        (adjustedGapSize / (math.pi * size.width)) * 360.0;
+    final r = size.width / 2 - strokeWidth / 2;
+    final numVertices = max(
+      _Defaults.minCircularVertexCount,
+      (2 * pi * r / wavelength).round(),
+    );
 
-    canvas.save();
-    if (!isLtr) {
-      final double centerX = size.width / 2;
-      final double centerY = size.height / 2;
-      canvas.translate(centerX, centerY);
-      canvas.scale(-1.0, 1.0);
-      canvas.translate(-centerX, -centerY);
+    final starPolygon =
+        RoundedPolygon.star(
+          numVerticesPerRadius: numVertices,
+          innerRadius: 0.75,
+          rounding: CornerRounding(radius: 0.35, smoothing: 0.4),
+          innerRounding: CornerRounding(radius: 0.5),
+        ).transformed(
+          // make the star bigger - the size of [size]
+          (x, y) => (x / 0.9, y / 0.9),
+        );
+
+    final circlePolygon = RoundedPolygon.circle(numVertices: numVertices);
+
+    final activePath = Morph(circlePolygon, starPolygon).toPath(
+      progress: amplitude,
+      // if startAngle is left at 0, it rotates it (maybe flutter bug?)
+      startAngle: 360,
+      repeatPath: true,
+    );
+
+    final activePathMetrics = activePath
+        .transform(
+          _getTransform(
+            size.width / 2,
+            (-pi / 2) - faze * (1 / numVertices * 2 * pi) * 2,
+            xCenter,
+            yCenter,
+          ),
+        )
+        .computeMetrics();
+
+    final cutActivePath = Path();
+    for (PathMetric metric in activePathMetrics) {
+      final double start = metric.length * faze / numVertices;
+      final double end = metric.length * (progress / 2 + faze / numVertices);
+
+      // Extract that specific portion and add it to our new path
+      cutActivePath.addPath(metric.extractPath(start, end), Offset.zero);
     }
 
-    if (progress != null) {
-      // determinate mode
-      final double currentProgress = progress!;
-      const double startAngle = 270.0; // 12 o'clock
-      final double sweep = currentProgress * 360.0;
+    // TRACK PATH
 
-      // Draw track
-      final double gapSweep = math.min(sweep, gapSizeSweep);
-      final double trackStart = startAngle + sweep + gapSweep;
-      final double trackSweep = 360.0 - sweep - gapSweep * 2.0;
+    final trackPath = circlePolygon.toPath();
+    final trackPathMetrics = trackPath
+        .transform(_getTransform(size.width / 2, pi / -2, xCenter, yCenter))
+        .computeMetrics();
 
-      if (trackSweep > 0 && trackColor != Colors.transparent) {
-        _drawArc(canvas, trackStart, trackSweep, trackColor, size, paint);
-      }
+    final cutTrackPath = Path();
+    // At the start, show the full path, ignore any gaps
+    final gapSizeRatio = clampDouble(progress * 20, 0, 1);
+    final finalGap =
+        (strokeWidth / 2 + gapSize * 1.5) *
+        gapSizeRatio; // multiply gap by 1.5 to look like native
+    for (PathMetric metric in trackPathMetrics) {
+      final double start = metric.length * progress + finalGap;
+      final double end = metric.length - finalGap;
 
-      // Draw active indicator
-      _drawArc(canvas, startAngle, sweep, color, size, paint);
-    } else {
-      // indeterminate mode
-      final double t = animationValue ?? 0.0;
-
-      // 1. Global rotation: 3 full rotations (1080 degrees) in 6 seconds
-      final double globalRotation = t * 1080.0;
-
-      // 2. Additional rotation: 90 degrees every 1500 ms
-      final int cycleIndex = (t * 4).floor();
-      final double tCycle = (t * 4) % 1.0;
-      double additionalRotation = cycleIndex * 90.0;
-      if (tCycle <= 0.2) {
-        final double u = tCycle / 0.2;
-        additionalRotation += 90.0 * _decelerateEasing.transform(u);
-      } else {
-        additionalRotation += 90.0;
-      }
-
-      // 3. Progress sweep: min 0.1 to max 0.87 progress
-      double progressSweepFraction = 0.1;
-      if (t <= 0.5) {
-        final double u = t / 0.5;
-        progressSweepFraction = lerpDouble(
-          0.1,
-          0.87,
-          Curves.fastOutSlowIn.transform(u),
-        )!;
-      } else {
-        final double u = (t - 0.5) / 0.5;
-        progressSweepFraction = lerpDouble(
-          0.87,
-          0.1,
-          Curves.fastOutSlowIn.transform(u),
-        )!;
-      }
-
-      final double sweep = progressSweepFraction * 360.0;
-      final double gapSweep = math.min(sweep, gapSizeSweep);
-
-      canvas.save();
-      // Rotate canvas about center
-      final double centerX = size.width / 2;
-      final double centerY = size.height / 2;
-      canvas.translate(centerX, centerY);
-      canvas.rotate((globalRotation + additionalRotation) * math.pi / 180);
-      canvas.translate(-centerX, -centerY);
-
-      // Draw track
-      final double trackStart = sweep + gapSweep;
-      final double trackSweep = 360.0 - sweep - gapSweep * 2.0;
-      if (trackSweep > 0 && trackColor != Colors.transparent) {
-        _drawArc(canvas, trackStart, trackSweep, trackColor, size, paint);
-      }
-
-      // Draw active indicator
-      _drawArc(canvas, 0.0, sweep, color, size, paint);
-
-      canvas.restore();
+      // Extract that specific portion and add it to our new path
+      cutTrackPath.addPath(metric.extractPath(start, end), Offset.zero);
     }
 
-    canvas.restore();
+    canvas.drawPath(cutTrackPath, trackPaint);
+    if (progress != 0) {
+      canvas.drawPath(cutActivePath, activePaint);
+    }
   }
 
   @override
-  bool shouldRepaint(covariant _CircularProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.animationValue != animationValue ||
-        oldDelegate.color != color ||
-        oldDelegate.trackColor != trackColor ||
-        oldDelegate.strokeWidth != strokeWidth ||
-        oldDelegate.strokeCap != strokeCap ||
-        oldDelegate.gapSize != gapSize ||
-        oldDelegate.isLtr != isLtr;
+  bool shouldRepaint(_WavyCircularProgressIndicatorPainter oldDelegate) {
+    if (oldDelegate.faze != faze) return true;
+    if (oldDelegate.progress != progress) return true;
+    if (oldDelegate.amplitude != amplitude) return true;
+    if (oldDelegate.wavelength != wavelength) return true;
+    if (oldDelegate.gapSize != gapSize) return true;
+    if (oldDelegate.activeColor != activeColor) return true;
+    if (oldDelegate.trackColor != trackColor) return true;
+    if (oldDelegate.strokeWidth != strokeWidth) return true;
+
+    return false;
   }
 }

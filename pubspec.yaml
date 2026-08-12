@@ -1,9 +1,10 @@
-name: m3e_core
+name: m3e_widgets
 description: "A single Flutter package providing Material 3 expressive components like material shapes, card list, dismissible cards, expandable cards and dropdown menu."
 version: 0.1.5
 homepage: https://github.com/Mudit200408/m3e_core
 repository: https://github.com/Mudit200408/m3e_core
 issue_tracker: https://github.com/Mudit200408/m3e_core/issues
+publish_to: none
 
 topics:
   - ui
@@ -13,7 +14,7 @@ topics:
   - dropdown
 
 environment:
-  sdk: ^3.11.0
+  sdk: ^3.12.0
   flutter: ">=3.44.0"
 
 dependencies:
@@ -31,6 +32,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
 flutter:
+  shaders:
+    - shaders/new_ink_sparkle.frag
   plugin:
     platforms:
       android:

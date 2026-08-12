@@ -92,16 +92,12 @@ class RenderButtonGroup extends RenderBox
         ContainerRenderObjectMixin<RenderBox, ButtonGroupParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, ButtonGroupParentData> {
   RenderButtonGroup({
-    required Axis direction,
-    required double spacing,
-    required int? pressedIndex,
-    required double animValue,
-    required double expandedRatio,
-  }) : _direction = direction,
-       _spacing = spacing,
-       _pressedIndex = pressedIndex,
-       _animValue = animValue,
-       _expandedRatio = expandedRatio;
+    required this._direction,
+    required this._spacing,
+    required this._pressedIndex,
+    required this._animValue,
+    required this._expandedRatio,
+  });
 
   Axis _direction;
   Axis get direction => _direction;

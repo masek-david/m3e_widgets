@@ -32,13 +32,16 @@ class M3EProgressIndicatorDefaults {
   static const double linearTrackStopIndicatorSize = 4.0;
 
   /// Default wavelength of a determinate linear progress indicator wave.
-  static const double linearDeterminateWavelength = 20.0;
+  static const double linearDeterminateWavelength = 40.0;
 
   /// Default wavelength of an indeterminate linear progress indicator wave.
   static const double linearIndeterminateWavelength = 20.0;
 
-  /// Default speed of a linear progress indicator wave.
-  static const double linearWaveSpeed = 20.0;
+  /// Default speed of a linear determinate progress indicator wave.
+  static const double linearDeterminateWaveSpeed = 40.0;
+
+  /// Default speed of a linear indeterminate progress indicator wave.
+  static const double linearIndeterminateWaveSpeed = 20.0;
 
   /// Default container height of the linear wavy progress indicator.
   static const double linearContainerHeight = 10.0;

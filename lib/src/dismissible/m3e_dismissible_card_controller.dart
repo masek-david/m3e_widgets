@@ -623,6 +623,8 @@ mixin M3EDismissibleCardMixin<T extends StatefulWidget>
       return;
     }
 
+    if(!mounted) return;
+
     // Capture size & freeze the child.
     final size = _cardSize(slot);
     slot.capturedHeight = size.height;

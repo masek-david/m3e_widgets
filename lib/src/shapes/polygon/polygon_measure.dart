@@ -3,7 +3,7 @@ part of 'shapes.dart';
 class MeasuredPolygon {
   MeasuredPolygon._({
     required Measurer measurer,
-    required List<ProgressableFeature> features,
+    required this._features,
     required List<Cubic> cubics,
     required List<double> outlineProgress,
   }) : assert(
@@ -18,8 +18,7 @@ class MeasuredPolygon {
          outlineProgress.last == 1,
          'Last outline progress value is expected to be one',
        ),
-       _measurer = measurer,
-       _features = features {
+       _measurer = measurer {
     final measuredCubics = <MeasuredCubic>[];
     var startOutlineProgress = 0.0;
     for (var i = 0; i < cubics.length; i++) {

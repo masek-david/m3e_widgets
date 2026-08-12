@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:m3e_core/src/shapes/clipper.dart';
-import 'package:m3e_core/src/shapes/enums/shapes.dart';
-import 'package:m3e_core/src/shapes/m3e_shapeborders.dart';
+import 'package:m3e_widgets/src/shapes/clipper.dart';
+import 'package:m3e_widgets/src/shapes/enums/shapes.dart';
+import 'package:m3e_widgets/src/shapes/m3e_shapeborders.dart';
 
 // Assuming Shapes enum and M3EClipper class are defined elsewhere.
 // enum Shapes { ... }

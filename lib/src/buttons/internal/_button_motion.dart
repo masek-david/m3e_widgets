@@ -4,6 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:motor/motor.dart';
 
@@ -456,6 +457,7 @@ class _RadiusAndPaddingMotionState extends State<RadiusAndPaddingMotion> {
 /// buttons (e.g. a split-button leading segment with outer ≈ 16 dp and
 /// inner ≈ 4 dp) the ring follows the exact contour of the button rather
 /// than approximating it with a uniform inflation.
+// TODO fix padding for small, xsmall
 class FocusRing extends StatelessWidget {
   final BorderRadius radius;
   final Widget child;
@@ -474,7 +476,7 @@ class FocusRing extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!focused) return RepaintBoundary(child: child);
 
-    final color = Theme.of(context).colorScheme.primary;
+    final color = Theme.of(context).colorScheme.secondary;
 
     const double gap = _ConstProperties.focusRingGap;
     const double width = _ConstProperties.focusRingWidth;

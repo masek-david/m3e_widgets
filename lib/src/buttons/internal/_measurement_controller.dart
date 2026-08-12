@@ -4,7 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/widgets.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 class ButtonMeasurementController {
   ButtonMeasurementController({required int actionCount}) {

@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 // Copyright (c) 2026 Mudit Purohit
 //
 // This source code is licensed under the MIT license found in the
@@ -9,10 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:m3e_core/m3e_core.dart';
-import 'package:m3e_core/src/buttons/core/m3e_button_group_provider.dart';
-import 'package:m3e_core/src/buttons/internal/_tokens_adapter.dart';
-import 'package:m3e_core/src/buttons/internal/button_constants.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+import 'package:m3e_widgets/src/buttons/core/m3e_button_group_provider.dart';
+import 'package:m3e_widgets/src/buttons/internal/_tokens_adapter.dart';
+import 'package:m3e_widgets/src/buttons/internal/button_constants.dart';
 import 'package:motor/motor.dart';
 
 part 'm3e_toggle_button_group_collaborators.dart';

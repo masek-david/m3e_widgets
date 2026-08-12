@@ -5,7 +5,9 @@
 
 import 'dart:math' as math;
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
+
 import 'm3e_progress_indicator_defaults.dart';
 import 'm3e_progress_indicator_utils.dart';
 
@@ -60,12 +62,21 @@ class M3ELinearWavyProgressIndicator extends StatefulWidget {
     this.trackStrokeWidth = M3EProgressIndicatorDefaults.linearTrackStrokeWidth,
     this.gapSize = M3EProgressIndicatorDefaults.linearIndicatorTrackGapSize,
     this.stopSize = M3EProgressIndicatorDefaults.linearTrackStopIndicatorSize,
-    this.wavelength = M3EProgressIndicatorDefaults.linearDeterminateWavelength,
-    this.waveSpeed = M3EProgressIndicatorDefaults.linearWaveSpeed,
+    double? wavelength,
+    double? waveSpeed,
     this.height = M3EProgressIndicatorDefaults.linearContainerHeight,
     this.width = 240.0,
     this.amplitude,
-  });
+  }) : wavelength =
+           wavelength ??
+           (value == null
+               ? M3EProgressIndicatorDefaults.linearIndeterminateWavelength
+               : M3EProgressIndicatorDefaults.linearDeterminateWavelength),
+       waveSpeed =
+           waveSpeed ??
+           (value == null
+               ? M3EProgressIndicatorDefaults.linearIndeterminateWaveSpeed
+               : M3EProgressIndicatorDefaults.linearDeterminateWaveSpeed);
 
   @override
   State<M3ELinearWavyProgressIndicator> createState() =>
@@ -447,7 +458,12 @@ class _LinearWavyProgressPainter extends CustomPainter {
         strokeCapWidth,
         size.width - strokeCapWidth,
       );
-      final double trackStart = adjustedBarHead + gapSize + strokeCapWidth * 2;
+
+      // At the start, show the full path, ignore any gaps
+      final gapSizeRatio = clampDouble((progress ?? 1) * 100, 0, 1);
+      final finalGap = (strokeCapWidth * 2 + gapSize) * gapSizeRatio;
+
+      final double trackStart = adjustedBarHead + finalGap;
       final double trackEnd = size.width - strokeCapWidth;
 
       if (trackStart < trackEnd) {
@@ -541,7 +557,7 @@ class _LinearWavyProgressPainter extends CustomPainter {
 
       // Gap 2: between secondLineHead and firstLineTail
       final double secondTrackStart = secondLineHead * size.width + adjustedGap;
-      final double secondTrackEnd = firstLineTail * size.width - adjustedGap;
+      final double secondTrackEnd = firstLineTail * size.width - (firstLineTail == 1.0 ? 0 : adjustedGap);
       if (secondTrackStart < secondTrackEnd) {
         trackPath.moveTo(secondTrackStart, size.height / 2);
         trackPath.lineTo(secondTrackEnd, size.height / 2);

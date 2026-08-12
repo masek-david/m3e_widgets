@@ -116,7 +116,6 @@ class M3EColorScheme {
     if (systemColorScheme != null) {
       return systemColorScheme.copyWith(
         surface: Color(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
-        background: Color(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
         surfaceContainerLowest: Color(
           MaterialDynamicColors.surfaceContainerLowest.getArgb(dynamicScheme),
         ),
@@ -137,9 +136,6 @@ class M3EColorScheme {
         ),
         surfaceDim: Color(
           MaterialDynamicColors.surfaceDim.getArgb(dynamicScheme),
-        ),
-        surfaceVariant: Color(
-          MaterialDynamicColors.surfaceVariant.getArgb(dynamicScheme),
         ),
         onPrimaryContainer: Color(
           MaterialDynamicColors.onPrimaryContainer.getArgb(dynamicScheme),
@@ -205,15 +201,6 @@ class M3EColorScheme {
       ),
       surfaceDim: Color(
         MaterialDynamicColors.surfaceDim.getArgb(dynamicScheme),
-      ),
-      surfaceVariant: Color(
-        MaterialDynamicColors.surfaceVariant.getArgb(dynamicScheme),
-      ),
-
-      // Deprecated background properties still required by ColorScheme constructor
-      background: Color(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
-      onBackground: Color(
-        MaterialDynamicColors.onSurface.getArgb(dynamicScheme),
       ),
 
       surfaceContainerLowest: Color(

@@ -1,3 +1,16 @@
+# 0.2.0
+- Add new `M3EIconButton`, `M3EIconToggleButton`
+- Add new `M3EButtonStyle.standard` to be used by icon buttons
+- Add new `M3EIconButtonWidth` to be used by icon buttons
+- Completely rewritten `M3ECircularProgressIndicator`, which now uses RoundedPolygon.star, just as Jetpack Compose
+- Created new splash factory `NewInkSparkle`, based on Flutter's `InkSparkle`, but with edited values to be more in line with native Android
+- Updated button text styles, fixed padding issues, fixed colors not following M3E guidelines
+
+- Updated `M3ESplitButton`'s popup to be more in line with Material 3 Expressive
+- Updated `M3ESplitButton`'s text styles
+- Updated `FocusRing`'s default color to secondary
+- Removed unused constants, fixed some constants to be more in line with Material 3 Expressive
+
 # 0.1.5
 - Allow overriding or disabling drop shadows via `boxShadow` in `M3EDismissibleCardStyle` (#1)
 - Fix drop shadow rendering so setting `elevation` to `0` eliminates shadows automatically (#1)

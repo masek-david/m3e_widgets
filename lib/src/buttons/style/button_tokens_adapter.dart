@@ -42,6 +42,8 @@ class M3EButtonMeasurements {
     required this.iconGap,
   });
   final double height;
+
+  /// Horizontal padding
   final double hPadding;
   final double iconSize;
   final double iconGap;
@@ -143,6 +145,7 @@ class M3EButtonTokensAdapter {
         M3EButtonSize.xl: 16.0,
       });
 
+  // TODO hovered shouldnt morph shape
   static final Map<M3EButtonSize, double> _hoveredRadiusTable =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 10.0,
@@ -152,6 +155,7 @@ class M3EButtonTokensAdapter {
         M3EButtonSize.xl: 22.0,
       });
 
+  // TODO where do these come from?
   static final Map<M3EButtonSize, double> _equalizedMinWidthTable =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 40.0,
@@ -165,9 +169,9 @@ class M3EButtonTokensAdapter {
       Map<M3EButtonSize, M3EButtonMeasurements>.unmodifiable({
         M3EButtonSize.xs: const M3EButtonMeasurements(
           height: 32,
-          hPadding: 16,
+          hPadding: 12,
           iconSize: 20,
-          iconGap: 8,
+          iconGap: 4,
         ),
         M3EButtonSize.sm: const M3EButtonMeasurements(
           height: 40,
@@ -195,6 +199,32 @@ class M3EButtonTokensAdapter {
         ),
       });
 
+  static final Map<M3EIconButtonWidth, Map<M3EButtonSize, double>>
+  _iconButtonWidthTable =
+      Map<M3EIconButtonWidth, Map<M3EButtonSize, double>>.unmodifiable({
+        M3EIconButtonWidth.narrow: {
+          M3EButtonSize.xs: 28.0,
+          M3EButtonSize.sm: 32.0,
+          M3EButtonSize.md: 48.0,
+          M3EButtonSize.lg: 64.0,
+          M3EButtonSize.xl: 104.0,
+        },
+        M3EIconButtonWidth.standard: {
+          M3EButtonSize.xs: 32.0,
+          M3EButtonSize.sm: 40.0,
+          M3EButtonSize.md: 56.0,
+          M3EButtonSize.lg: 96.0,
+          M3EButtonSize.xl: 136.0,
+        },
+        M3EIconButtonWidth.wide: {
+          M3EButtonSize.xs: 40.0,
+          M3EButtonSize.sm: 52.0,
+          M3EButtonSize.md: 72.0,
+          M3EButtonSize.lg: 128.0,
+          M3EButtonSize.xl: 184.0,
+        },
+      });
+
   bool _shouldRecache() {
     final theme = Theme.of(context);
     final currentColorScheme = theme.colorScheme;
@@ -208,8 +238,8 @@ class M3EButtonTokensAdapter {
     _cachedColorScheme = theme.colorScheme;
     _cachedTextTheme = theme.textTheme;
 
-    _cachedOutline = _cachedColorScheme!.outline;
-    _cachedFocusRingColor = _cachedColorScheme!.primary;
+    _cachedOutline = _cachedColorScheme!.outlineVariant;
+    _cachedFocusRingColor = _cachedColorScheme!.secondary;
     _cachedFocusRingWidth = 2.0;
     _cachedFocusRingGap = ButtonConstants.kFocusRingGap;
     _cachedMinWidthFloor = 48.0;
@@ -241,6 +271,7 @@ class M3EButtonTokensAdapter {
         return c.surfaceContainerLow;
       case M3EButtonStyle.outlined:
       case M3EButtonStyle.text:
+      case M3EButtonStyle.standard:
         return Colors.transparent;
     }
   }
@@ -252,18 +283,35 @@ class M3EButtonTokensAdapter {
         return c.onPrimary;
       case M3EButtonStyle.tonal:
         return c.onSecondaryContainer;
-      case M3EButtonStyle.elevated:
       case M3EButtonStyle.outlined:
+      case M3EButtonStyle.standard:
+        return c.onSurfaceVariant;
+      case M3EButtonStyle.elevated:
       case M3EButtonStyle.text:
         return c.primary;
     }
   }
 
   /// Gets the outline color for outlined buttons.
-  Color outline() => _cachedOutline ?? c.outline;
+  Color outline() => _cachedOutline ?? c.outlineVariant;
+
+  /// Gets the outline width for outlined buttons.
+  double outlineWidth(M3EButtonSize size) {
+    switch (size) {
+      case .xs:
+      case .sm:
+      case .md:
+        return 1;
+      case .lg:
+      case .xl:
+        return 2;
+      default:
+        return 1;
+    }
+  }
 
   /// Gets the color for the Material 3 Expressive focus ring.
-  Color focusRingColor() => _cachedFocusRingColor ?? c.primary;
+  Color focusRingColor() => _cachedFocusRingColor ?? c.secondary;
 
   /// Gets the width of the focus ring border.
   double focusRingWidth() => _cachedFocusRingWidth ?? 2.0;
@@ -280,18 +328,15 @@ class M3EButtonTokensAdapter {
     switch (style) {
       case M3EButtonStyle.elevated:
         return pressed
-            ? 0
+            ? 1
             : hovered
             ? 3
             : 1;
       case M3EButtonStyle.filled:
       case M3EButtonStyle.tonal:
-        return pressed
-            ? 0
-            : hovered
-            ? 1
-            : 0;
+        return hovered ? 1 : 0;
       case M3EButtonStyle.outlined:
+      case M3EButtonStyle.standard:
       case M3EButtonStyle.text:
         return 0;
     }
@@ -361,26 +406,34 @@ class M3EButtonTokensAdapter {
     return _measurementsTable[M3EButtonSize.md]!;
   }
 
+  /// Gets the square corner radius for the specified button size.
+  double iconButtonWidth(M3EButtonSize size, M3EIconButtonWidth width) =>
+      _iconButtonWidthTable[width]?[size] ?? 40;
+
+  TextStyle getLabelStyle(M3EButtonSize size) {
+    final tt = _cachedTextTheme ?? Theme.of(context).textTheme;
+    final base = switch (size.name) {
+      'xs' => tt.labelLarge ?? const TextStyle(fontSize: 14),
+      'sm' => tt.labelLarge ?? const TextStyle(fontSize: 14),
+      'md' => tt.titleMedium ?? const TextStyle(fontSize: 16),
+      'lg' => tt.headlineSmall ?? const TextStyle(fontSize: 24),
+      'xl' => tt.headlineLarge ?? const TextStyle(fontSize: 32),
+      _ => tt.labelLarge ?? const TextStyle(fontSize: 14),
+    };
+    return base.copyWith(overflow: TextOverflow.ellipsis);
+  }
+
   // ═══════════════════════════════════════════════════════════════════════
   // Split Button Tokens
   // ═══════════════════════════════════════════════════════════════════════
 
-  static final Map<M3EButtonSize, double> _splitHeight =
+  static final Map<M3EButtonSize, double> _splitButtonHeight =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 32.0,
         M3EButtonSize.sm: 40.0,
         M3EButtonSize.md: 56.0,
         M3EButtonSize.lg: 96.0,
         M3EButtonSize.xl: 136.0,
-      });
-
-  static final Map<M3EButtonSize, double> _splitTrailingWidth =
-      Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 22.0,
-        M3EButtonSize.sm: 22.0,
-        M3EButtonSize.md: 26.0,
-        M3EButtonSize.lg: 38.0,
-        M3EButtonSize.xl: 50.0,
       });
 
   static final Map<M3EButtonSize, double> _splitInnerCornerRadius =
@@ -401,15 +454,6 @@ class M3EButtonTokensAdapter {
         M3EButtonSize.xl: 20.0,
       });
 
-  static final Map<M3EButtonSize, double> _splitInnerPadding =
-      Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 4.0,
-        M3EButtonSize.sm: 4.0,
-        M3EButtonSize.md: 4.0,
-        M3EButtonSize.lg: 8.0,
-        M3EButtonSize.xl: 12.0,
-      });
-
   static final Map<M3EButtonSize, double> _splitMenuIconOffset =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: -1.0,
@@ -419,66 +463,44 @@ class M3EButtonTokensAdapter {
         M3EButtonSize.xl: -6.0,
       });
 
-  static final Map<M3EButtonSize, double> _splitIcon =
+  static final Map<M3EButtonSize, double> _splitLeadingButtonIconSize =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 20.0,
-        M3EButtonSize.sm: 24.0,
+        M3EButtonSize.sm: 20.0,
         M3EButtonSize.md: 24.0,
         M3EButtonSize.lg: 32.0,
         M3EButtonSize.xl: 40.0,
       });
 
-  static final Map<M3EButtonSize, double> _splitOuterRadiusRound =
+  static final Map<M3EButtonSize, double> _splitTrailingButtonIconSize =
       Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 16.0,
-        M3EButtonSize.sm: 20.0,
-        M3EButtonSize.md: 28.0,
-        M3EButtonSize.lg: 48.0,
-        M3EButtonSize.xl: 68.0,
-      });
-
-  static final Map<M3EButtonSize, double> _splitOuterRadiusSquare =
-      Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 8.0,
-        M3EButtonSize.sm: 10.0,
-        M3EButtonSize.md: 14.0,
-        M3EButtonSize.lg: 24.0,
-        M3EButtonSize.xl: 34.0,
+        M3EButtonSize.xs: 22.0,
+        M3EButtonSize.sm: 22.0,
+        M3EButtonSize.md: 26.0,
+        M3EButtonSize.lg: 38.0,
+        M3EButtonSize.xl: 50.0,
       });
 
   // Pressed inner corner radius.
   //
-  // Must be smaller than _splitInnerCornerRadius so the inner corner pinches
-  // inward on press, giving tactile "grip" feedback.
-  //
-  // Formula: max(2, innerResting / 2)
   //
   // | Size | innerResting | pressedRadius |
   // |------|--------------|---------------|
-  // | xs   |      4       |       2       |
-  // | sm   |      4       |       2       |
-  // | md   |      4       |       2       |
-  // | lg   |      8       |       4       |
-  // | xl   |     12       |       6       |
+  // | xs   |      4       |       8       |
+  // | sm   |      4       |      12       |
+  // | md   |      4       |      12       |
+  // | lg   |      8       |      20       |
+  // | xl   |     12       |      20       |
   static final Map<M3EButtonSize, double> _splitPressedRadius =
       Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 2.0,
-        M3EButtonSize.sm: 2.0,
-        M3EButtonSize.md: 2.0,
-        M3EButtonSize.lg: 4.0,
-        M3EButtonSize.xl: 6.0,
+        M3EButtonSize.xs: 8.0,
+        M3EButtonSize.sm: 12.0,
+        M3EButtonSize.md: 12.0,
+        M3EButtonSize.lg: 20.0,
+        M3EButtonSize.xl: 20.0,
       });
 
-  static final Map<M3EButtonSize, double> _splitLeadingIconBlockWidth =
-      Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 20.0,
-        M3EButtonSize.sm: 20.0,
-        M3EButtonSize.md: 24.0,
-        M3EButtonSize.lg: 32.0,
-        M3EButtonSize.xl: 40.0,
-      });
-
-  static final Map<M3EButtonSize, double> _splitLeftOuterPadding =
+  static final Map<M3EButtonSize, double> _splitLeadingButtonLeadingSpace =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 12.0,
         M3EButtonSize.sm: 16.0,
@@ -487,7 +509,7 @@ class M3EButtonTokensAdapter {
         M3EButtonSize.xl: 64.0,
       });
 
-  static final Map<M3EButtonSize, double> _splitGapIconToLabel =
+  static final Map<M3EButtonSize, double> _splitIconLabelGap =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 4.0,
         M3EButtonSize.sm: 8.0,
@@ -505,25 +527,7 @@ class M3EButtonTokensAdapter {
         M3EButtonSize.xl: 64.0,
       });
 
-  static final Map<M3EButtonSize, double> _splitTrailingLeftInnerPadding =
-      Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 13.0,
-        M3EButtonSize.sm: 13.0,
-        M3EButtonSize.md: 15.0,
-        M3EButtonSize.lg: 29.0,
-        M3EButtonSize.xl: 43.0,
-      });
-
-  static final Map<M3EButtonSize, double> _splitRightOuterPadding =
-      Map<M3EButtonSize, double>.unmodifiable({
-        M3EButtonSize.xs: 13.0,
-        M3EButtonSize.sm: 13.0,
-        M3EButtonSize.md: 15.0,
-        M3EButtonSize.lg: 29.0,
-        M3EButtonSize.xl: 43.0,
-      });
-
-  static final Map<M3EButtonSize, double> _splitSidePaddingSelected =
+  static final Map<M3EButtonSize, double> _splitTrailingButtonPadding =
       Map<M3EButtonSize, double>.unmodifiable({
         M3EButtonSize.xs: 13.0,
         M3EButtonSize.sm: 13.0,
@@ -533,15 +537,7 @@ class M3EButtonTokensAdapter {
       });
 
   /// Split button total height (same as standard button height).
-  double splitHeight(M3EButtonSize size) => _splitHeight[size] ?? 56.0;
-
-  /// Split button trailing segment width when not selected.
-  double splitTrailingWidth(M3EButtonSize size) {
-    for (final variant in _splitTrailingWidth.keys) {
-      if (variant.name == size.name) return _splitTrailingWidth[variant]!;
-    }
-    return 26.0;
-  }
+  double splitHeight(M3EButtonSize size) => _splitButtonHeight[size] ?? 56.0;
 
   /// Inner corner radius for both segments (resting state).
   double splitInnerCornerRadius(M3EButtonSize size) =>
@@ -551,75 +547,25 @@ class M3EButtonTokensAdapter {
   double splitHoveredInnerCornerRadius(M3EButtonSize size) =>
       _splitHoveredInnerCornerRadius[size] ?? 12.0;
 
-  /// Inner padding from inner edge to content.
-  double splitInnerPadding(M3EButtonSize size) =>
-      _splitInnerPadding[size] ?? 4.0;
-
   /// Menu chevron optical offset (negative = shift left) for unselected state.
   double splitMenuIconOffset(M3EButtonSize size) =>
       _splitMenuIconOffset[size] ?? -2.0;
 
   /// Icon size for both segments.
-  double splitIcon(M3EButtonSize size) => _splitIcon[size] ?? 24.0;
-
-  /// Outer corner radius for round shape.
-  double splitOuterRadiusRound(M3EButtonSize size) =>
-      _splitOuterRadiusRound[size] ?? 28.0;
-
-  /// Outer corner radius for square shape.
-  double splitOuterRadiusSquare(M3EButtonSize size) =>
-      _splitOuterRadiusSquare[size] ?? 14.0;
+  double splitLeadingIconSize(M3EButtonSize size) =>
+      _splitLeadingButtonIconSize[size] ?? 24.0;
 
   /// Inner corner radius when a segment is pressed.
-  ///
-  /// Always smaller than [splitInnerCornerRadius] so the inner corner pinches
-  /// inward on press, giving tactile grip feedback. Formula: max(2, innerResting / 2).
   double splitPressedRadius(M3EButtonSize size) =>
-      _splitPressedRadius[size] ?? 2.0;
-
-  /// Leading icon block width.
-  double splitLeadingIconBlockWidth(M3EButtonSize size) {
-    for (final variant in _splitLeadingIconBlockWidth.keys) {
-      if (variant.name == size.name) {
-        return _splitLeadingIconBlockWidth[variant]!;
-      }
-    }
-    return 24.0;
-  }
-
-  /// Left outer padding for leading content.
-  double splitLeftOuterPadding(M3EButtonSize size) =>
-      _splitLeftOuterPadding[size] ?? 24.0;
+      _splitPressedRadius[size] ?? 12.0;
 
   /// Gap between icon and label.
-  double splitGapIconToLabel(M3EButtonSize size) {
-    for (final variant in _splitGapIconToLabel.keys) {
-      if (variant.name == size.name) {
-        return _splitGapIconToLabel[variant]!;
-      }
-    }
-    return 8.0;
-  }
-
-  /// Right padding for label before divider.
-  double splitLabelRightPadding(M3EButtonSize size) =>
-      _splitLabelRightPadding[size] ?? 24.0;
-
-  /// Trailing left inner padding.
-  double splitTrailingLeftInnerPadding(M3EButtonSize size) =>
-      _splitTrailingLeftInnerPadding[size] ?? 13.0;
-
-  /// Right outer padding.
-  double splitRightOuterPadding(M3EButtonSize size) =>
-      _splitRightOuterPadding[size] ?? 17.0;
+  double splitIconLabelGap(M3EButtonSize size) =>
+      _splitIconLabelGap[size] ?? 8.0;
 
   /// Symmetrical padding when trailing is selected.
-  double splitSidePaddingSelected(M3EButtonSize size) {
-    for (final variant in _splitSidePaddingSelected.keys) {
-      if (variant.name == size.name) return _splitSidePaddingSelected[variant]!;
-    }
-    return 15.0;
-  }
+  double splitTrailingButtonPadding(M3EButtonSize size) =>
+      _splitTrailingButtonPadding[size] ?? 13.0;
 
   /// Minimum touch target height for each segment.
   double get splitMinTapTarget => 48.0;
@@ -627,31 +573,20 @@ class M3EButtonTokensAdapter {
   /// Gap between leading and trailing segments.
   double get splitInnerGap => 2.0;
 
-  /// Enhanced gap for elevated style.
-  double get splitElevatedInnerGap => 4.0;
-
   /// Chevron rotation turns when menu is open (180 degrees).
   double get splitChevronOpenTurns => 0.5;
 
   /// Compose-aligned token: leading segment start space.
   double splitLeadingButtonLeadingSpace(M3EButtonSize size) =>
-      splitLeftOuterPadding(size);
+      _splitLeadingButtonLeadingSpace[size] ?? 24.0;
 
   /// Compose-aligned token: leading segment end space.
   double splitLeadingButtonTrailingSpace(M3EButtonSize size) =>
-      splitLabelRightPadding(size);
+      _splitLabelRightPadding[size] ?? 24.0;
 
-  /// Compose-aligned token: trailing icon size.
-  double splitTrailingIconSize(M3EButtonSize size) =>
-      _splitTrailingWidth[size] ?? 26.0;
-
-  /// Compose-aligned token: trailing segment start space.
-  double splitTrailingButtonLeadingSpace(M3EButtonSize size) =>
-      splitTrailingLeftInnerPadding(size);
-
-  /// Compose-aligned token: trailing segment end space.
-  double splitTrailingButtonTrailingSpace(M3EButtonSize size) =>
-      splitRightOuterPadding(size);
+  /// Compose-aligned token: trailing button icon size.
+  double splitTrailingButtonIconSize(M3EButtonSize size) =>
+      _splitTrailingButtonIconSize[size] ?? 22.0;
 
   /// Compose-aligned token: selected trailing inner corner percent.
   double get splitTrailingInnerSelectedCornerPercent => 50.0;

@@ -27,9 +27,7 @@ class ColorResolver extends _CachedWidgetStateResolver<Color?> {
   final Color _color;
   final bool _applyDisabledAlpha;
 
-  ColorResolver({required Color color, bool applyDisabledAlpha = true})
-    : _color = color,
-      _applyDisabledAlpha = applyDisabledAlpha;
+  ColorResolver({required this._color, this._applyDisabledAlpha = true});
 
   @override
   WidgetStateProperty<Color?> buildProperty() {
@@ -52,14 +50,11 @@ class BackgroundColorResolver extends _CachedWidgetStateResolver<Color?> {
   final bool _applyDisabledAlpha;
 
   BackgroundColorResolver({
-    Color? decorationColor,
-    required Color fallbackColor,
-    bool transparentForOutlined = false,
-    bool applyDisabledAlpha = true,
-  }) : _decorationColor = decorationColor,
-       _fallbackColor = fallbackColor,
-       _transparentForOutlined = transparentForOutlined,
-       _applyDisabledAlpha = applyDisabledAlpha;
+    this._decorationColor,
+    required this._fallbackColor,
+    this._transparentForOutlined = false,
+    this._applyDisabledAlpha = true,
+  });
 
   @override
   WidgetStateProperty<Color?> buildProperty() {
@@ -103,14 +98,11 @@ class DecorationColorResolver extends _CachedWidgetStateResolver<Color?> {
   final bool _applyDisabledAlpha;
 
   DecorationColorResolver({
-    Color? decorationColor,
-    required Color Function(Set<WidgetState> states) fallbackResolver,
-    bool transparentForOutlined = false,
-    bool applyDisabledAlpha = true,
-  }) : _decorationColor = decorationColor,
-       _fallbackResolver = fallbackResolver,
-       _transparentForOutlined = transparentForOutlined,
-       _applyDisabledAlpha = applyDisabledAlpha;
+    this._decorationColor,
+    required this._fallbackResolver,
+    this._transparentForOutlined = false,
+    this._applyDisabledAlpha = true,
+  });
 
   @override
   WidgetStateProperty<Color?> buildProperty() {
@@ -157,10 +149,9 @@ class BorderSideResolver extends _CachedWidgetStateResolver<BorderSide> {
   final BorderSide Function(Set<WidgetState> states) _fallbackResolver;
 
   BorderSideResolver({
-    BorderSide? decorationBorderSide,
-    required BorderSide Function(Set<WidgetState> states) fallbackResolver,
-  }) : _decorationBorderSide = decorationBorderSide,
-       _fallbackResolver = fallbackResolver;
+    this._decorationBorderSide,
+    required this._fallbackResolver,
+  });
 
   @override
   WidgetStateProperty<BorderSide> buildProperty() {
@@ -176,12 +167,10 @@ class OutlineBorderSideResolver extends _CachedWidgetStateResolver<BorderSide> {
   final bool _applyDisabledAlpha;
 
   OutlineBorderSideResolver({
-    Color? decorationForegroundColor,
-    required Color fallbackColor,
-    bool applyDisabledAlpha = true,
-  }) : _decorationForegroundColor = decorationForegroundColor,
-       _fallbackColor = fallbackColor,
-       _applyDisabledAlpha = applyDisabledAlpha;
+    this._decorationForegroundColor,
+    required this._fallbackColor,
+    this._applyDisabledAlpha = true,
+  });
 
   @override
   WidgetStateProperty<BorderSide> buildProperty() {

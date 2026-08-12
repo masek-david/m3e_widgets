@@ -5,36 +5,26 @@
 /// interactions.
 library;
 
-// Common components.
-export 'src/common/m3e_common.dart';
-
-// Non-dismissible variants (static layout).
-export 'src/card/m3e_card.dart';
-
-// Dismissible variants (interactive dismiss + neighbour pull).
-export 'src/dismissible/m3e_dismissible.dart';
-
-// Dropdown menu.
-export 'src/dropdown/dropdown.dart';
-
-// Expandable card list.
-export 'src/expandable/expandable.dart';
-
-// M3 Shapes
-export 'src/shapes/m3e_shapes_core.dart';
-
 // M3E Buttons
 export 'src/buttons/button.dart';
-
+// Non-dismissible variants (static layout).
+export 'src/card/m3e_card.dart';
+// Common components.
+export 'src/common/m3e_common.dart';
+// Dismissible variants (interactive dismiss + neighbour pull).
+export 'src/dismissible/m3e_dismissible.dart';
+// Dropdown menu.
+export 'src/dropdown/dropdown.dart';
+// Expandable card list.
+export 'src/expandable/expandable.dart';
 // M3E Floating Toolbar
 export 'src/floating_toolbar/floating_toolbar.dart';
-
-// M3E Slider
-export 'src/slider/slider.dart';
-
-// M3E Progress Indicator
-export 'src/progress_indicator/progress_indicator.dart';
-
+export 'src/loading-indicator/m3e_contained_loading_indicator.dart';
 // M3E Loading Indicator
 export 'src/loading-indicator/m3e_loading_indicator.dart';
-export 'src/loading-indicator/m3e_contained_loading_indicator.dart';
+// M3E Progress Indicator
+export 'src/progress_indicator/progress_indicator.dart';
+// M3 Shapes
+export 'src/shapes/m3e_shapes_core.dart';
+// M3E Slider
+export 'src/slider/slider.dart';

@@ -5,11 +5,12 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:m3e_widgets/src/buttons/internal/new_ink_sparkle.dart';
 
+import '../../../common/m3e_common.dart';
 import '../../internal/_button_motion.dart';
 import '../../internal/button_constants.dart';
 import '../../internal/m3e_base_button_state.dart';
-import '../../../common/m3e_common.dart';
 import '../../style/button_tokens_adapter.dart';
 import '../../style/m3e_button_decoration.dart';
 import '../../style/m3e_button_enums.dart';
@@ -18,7 +19,7 @@ const Alignment _kAlignmentCenter = Alignment.center;
 const VisualDensity _kVisualDensityStandard = VisualDensity.standard;
 const Duration _kDurationZero = Duration.zero;
 const InteractiveInkFeatureFactory _kDefaultSplashFactory =
-    InkRipple.splashFactory;
+    NewInkSparkle.splashFactory;
 const bool _kDefaultEnableFeedback = true;
 final _kPressedRadiusMotion = M3EMotion.expressiveEffectsFast.toMotion();
 
@@ -364,8 +365,8 @@ class _M3EButtonState extends State<M3EButton>
           if (color != null) return color;
         }
         final isTransparent =
-            widget.style == M3EButtonStyle.outlined ||
-            widget.style == M3EButtonStyle.text;
+            widget.style == M3EButtonStyle.text ||
+            widget.style == M3EButtonStyle.standard;
 
         if (states.contains(WidgetState.disabled)) {
           return isTransparent
@@ -393,15 +394,17 @@ class _M3EButtonState extends State<M3EButton>
         final isOutlined = widget.style == M3EButtonStyle.outlined;
         if (!isOutlined) return BorderSide.none;
 
+        final width = _tokens.outlineWidth(widget.size);
+
         if (states.contains(WidgetState.disabled)) {
           return BorderSide(
             color: _tokens.c.onSurface.withValues(
               alpha: ButtonConstants.kDisabledOutlineAlpha,
             ),
-            width: 1,
+            width: width,
           );
         }
-        return BorderSide(color: _tokens.outline(), width: 1);
+        return BorderSide(color: _tokens.outline(), width: width);
       }),
       mouseCursor: WidgetStateProperty.resolveWith((states) {
         if (dec?.mouseCursor != null) {
@@ -413,7 +416,15 @@ class _M3EButtonState extends State<M3EButton>
         }
         return widget.mouseCursor;
       }),
-      overlayColor: dec?.overlayColor,
+      overlayColor: WidgetStateProperty.resolveWith((states) {
+        if (dec?.overlayColor != null) {
+          final color = dec!.overlayColor!.resolve(states);
+          if (color != null) return color;
+        }
+        return _tokens
+            .foreground(widget.style)
+            .withValues(alpha: ButtonConstants.kStateLayerOpacity);
+      }),
       surfaceTintColor: dec?.surfaceTintColor,
       enableFeedback:
           (dec?.haptic != null && dec!.haptic != M3EHapticFeedback.none)
@@ -634,6 +645,18 @@ class _M3EButtonState extends State<M3EButton>
           child: child,
         );
       case M3EButtonStyle.text:
+        button = TextButton(
+          style: style,
+          onPressed: onPressed,
+          onLongPress: onLongPress,
+          onHover: widget.onHover,
+          statesController: statesController,
+          focusNode: effectiveFocusNode,
+          autofocus: widget.autofocus,
+          onFocusChange: widget.onFocusChange,
+          child: child,
+        );
+      case M3EButtonStyle.standard:
         button = TextButton(
           style: style,
           onPressed: onPressed,

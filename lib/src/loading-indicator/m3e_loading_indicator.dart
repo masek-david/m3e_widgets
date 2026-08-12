@@ -13,7 +13,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/semantics.dart';
-import 'package:m3e_core/src/shapes/m3e_shapes_core.dart';
+import 'package:m3e_widgets/src/shapes/m3e_shapes_core.dart';
 
 /// A Material Design loading indicator.
 ///

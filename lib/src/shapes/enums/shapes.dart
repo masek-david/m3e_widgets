@@ -1,5 +1,6 @@
 import 'dart:math' as math;
-import 'package:m3e_core/src/shapes/polygon/shapes.dart';
+
+import 'package:m3e_widgets/src/shapes/polygon/shapes.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 /// Represents a collection of predefined geometric shapes.

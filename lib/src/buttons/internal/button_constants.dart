@@ -27,12 +27,6 @@ abstract final class ButtonConstants {
   /// How long to wait for a press-release threshold before forcing a reset.
   static const Duration kReleaseTimeout = Duration(seconds: 1);
 
-  // ── Measurement ──────────────────────────────────────────────────────────
-
-  /// Default natural-width fallback for icon-only buttons before the first
-  /// measurement completes. Equals the `sm` token height (40 dp).
-  static const double kIconOnlyNaturalSizeFallback = 40.0;
-
   // ── Overflow / scope ─────────────────────────────────────────────────────
 
   /// Sentinel `index` passed to [M3EButtonGroupItemScope] for the overflow
@@ -58,30 +52,17 @@ abstract final class ButtonConstants {
   static const double kDisabledForegroundAlpha = 0.38;
 
   /// Alpha value for disabled background color.
-  /// Reduces opacity to 12% for disabled state.
-  static const double kDisabledBackgroundAlpha = 0.12;
+  /// Reduces opacity to 10% for disabled state.
+  // EDIT from 0.12 to 0.10
+  static const double kDisabledBackgroundAlpha = 0.10;
 
   /// Alpha value for disabled outline/border color.
   /// Reduces opacity to 12% for disabled state.
-  static const double kDisabledOutlineAlpha = 0.12;
+  static const double kDisabledOutlineAlpha = 0.10;
 
-  // ── Radius ───────────────────────────────────────────────────────────────
-
-  /// Ratio used to calculate pressed corner radius from square radius.
-  /// Pressed radius = squareRadius * kPressedRadiusRatio, clamped to [6, 18].
-  static const double kPressedRadiusRatio = 0.6;
-
-  /// Minimum pressed corner radius in dp.
-  static const double kMinPressedRadius = 6.0;
-
-  /// Maximum pressed corner radius in dp.
-  static const double kMaxPressedRadius = 18.0;
+  static const double kStateLayerOpacity = 0.1;
 
   // ── Animation thresholds ─────────────────────────────────────────────────
-
-  /// Minimum delta threshold for triggering animation progress update.
-  /// Prevents floating-point noise from triggering micro-updates.
-  static const double kAnimationDeltaThreshold = 0.5;
 
   /// Triggers haptic feedback for the selected [M3EHapticFeedback] level.
   static void triggerHapticFeedback(M3EHapticFeedback haptic) {

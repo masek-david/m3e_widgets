@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../common/m3e_common.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 /// Styling overrides for [M3EButton].
 ///
@@ -386,6 +385,9 @@ class M3EToggleButtonDecoration {
   /// Custom border side via WidgetStateProperty.
   final WidgetStateProperty<BorderSide?>? side;
 
+  /// Custom padding.
+  final EdgeInsetsGeometry? padding;
+
   /// Custom mouse cursor.
   final WidgetStateProperty<MouseCursor?>? mouseCursor;
 
@@ -422,6 +424,7 @@ class M3EToggleButtonDecoration {
   final double? connectedInnerRadius;
 
   const M3EToggleButtonDecoration({
+    this.padding,
     this.backgroundColor,
     this.foregroundColor,
     this.side,
@@ -448,6 +451,7 @@ class M3EToggleButtonDecoration {
     Color? checkedForegroundColor,
     Color? disabledBackgroundColor,
     Color? disabledForegroundColor,
+    EdgeInsetsGeometry? padding,
     BorderSide? side,
     M3EMotion? motion,
     M3EHapticFeedback? haptic,
@@ -503,6 +507,7 @@ class M3EToggleButtonDecoration {
     return M3EToggleButtonDecoration(
       backgroundColor: backgroundColorProp,
       foregroundColor: foregroundColorProp,
+      padding: padding,
       side: sideProp,
       motion: motion,
       haptic: haptic,
@@ -526,6 +531,7 @@ class M3EToggleButtonDecoration {
     WidgetStateProperty<MouseCursor?>? mouseCursor,
     WidgetStateProperty<Color?>? overlayColor,
     WidgetStateProperty<Color?>? surfaceTintColor,
+    EdgeInsetsGeometry? padding,
     M3EMotion? motion,
     M3EHapticFeedback? haptic,
     double? borderRadius,
@@ -542,6 +548,7 @@ class M3EToggleButtonDecoration {
       mouseCursor: mouseCursor ?? this.mouseCursor,
       overlayColor: overlayColor ?? this.overlayColor,
       surfaceTintColor: surfaceTintColor ?? this.surfaceTintColor,
+      padding: padding ?? this.padding,
       motion: motion ?? this.motion,
       haptic: haptic ?? this.haptic,
       borderRadius: borderRadius ?? this.borderRadius,
@@ -563,6 +570,7 @@ class M3EToggleButtonDecoration {
           mouseCursor == other.mouseCursor &&
           overlayColor == other.overlayColor &&
           surfaceTintColor == other.surfaceTintColor &&
+          padding == other.padding &&
           motion == other.motion &&
           haptic == other.haptic &&
           borderRadius == other.borderRadius &&
@@ -581,6 +589,7 @@ class M3EToggleButtonDecoration {
     overlayColor,
     surfaceTintColor,
     motion,
+    padding,
     haptic,
     borderRadius,
     checkedRadius,

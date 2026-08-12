@@ -1,17 +1,17 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:example/screens/tabs/my_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
-import 'package:m3e_core/m3e_core.dart';
-
-import 'screens/m3e_dropdown_screen.dart';
 import 'screens/m3e_button_screen.dart';
-import 'screens/m3e_expandable_screen.dart';
 import 'screens/m3e_card_screen.dart';
 import 'screens/m3e_dismissible_screen.dart';
+import 'screens/m3e_dropdown_screen.dart';
+import 'screens/m3e_expandable_screen.dart';
 import 'screens/m3e_floating_toolbar_screen.dart';
-import 'screens/m3e_slider_screen.dart';
-import 'screens/m3e_progress_indicator_screen.dart';
 import 'screens/m3e_loading_indicator_screen.dart';
+import 'screens/m3e_progress_indicator_screen.dart';
+import 'screens/m3e_slider_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +57,7 @@ final ValueNotifier<ThemeSettings> themeSettingsNotifier = ValueNotifier(
     variant: M3EColorVariant.tonalSpot,
     contrastLevel: 0.0,
     useM3EColorScheme: true,
-    useSystemColor: true,
+    useSystemColor: false,
   ),
 );
 
@@ -138,10 +138,12 @@ class MyApp extends StatelessWidget {
                   theme: ThemeData(
                     colorScheme: lightScheme,
                     useMaterial3: true,
+                    visualDensity: .standard
                   ),
                   darkTheme: ThemeData(
                     colorScheme: darkScheme,
                     useMaterial3: true,
+                    visualDensity: .standard
                   ),
                   home: const ExampleHomePage(),
                 );
@@ -232,27 +234,22 @@ class ExampleHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
         title: const Text('M3E Component Library'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        actionsPadding: EdgeInsets.all(8),
         actions: [
           IconButton(
             icon: const Icon(Icons.palette_outlined),
             onPressed: () => _showThemeSettings(context),
             tooltip: 'Theme Customizer',
           ),
-          IconButton(
-            icon: Icon(
-              Theme.of(context).brightness == Brightness.light
-                  ? Icons.dark_mode
-                  : Icons.light_mode,
-            ),
-            onPressed: () {
-              themeNotifier.value =
-                  Theme.of(context).brightness == Brightness.light
-                  ? ThemeMode.dark
-                  : ThemeMode.light;
+          M3EToggleIconButton(
+            checked: Theme.of(context).brightness == Brightness.light,
+            icon: Icon(Icons.dark_mode),
+            checkedIcon: Icon(Icons.light_mode),
+            onCheckedChange: (checked) {
+              themeNotifier.value = checked ? ThemeMode.light : ThemeMode.dark;
             },
           ),
         ],
@@ -260,15 +257,14 @@ class ExampleHomePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32, left: 8, right: 8),
-            child: Text(
-              'Explore the Expressive Component Library built for beautiful and responsive Flutter applications.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
+          _buildNavCard(
+            context,
+            title: 'My Tab',
+            subtitle: 'All buttons',
+            icon: Icons.radio_button_on_outlined,
+            destination: const MyTab(),
           ),
+          Divider(),
           _buildNavCard(
             context,
             title: 'M3E Cards',

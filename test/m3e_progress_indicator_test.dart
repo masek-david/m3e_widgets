@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 void main() {
   group('M3ELinearProgressIndicator tests', () {
@@ -176,15 +176,15 @@ void main() {
     );
   });
 
-  group('M3ECircularWavyProgressIndicator tests', () {
+  group('M3ECircularProgressIndicator tests', () {
     testWidgets('renders determinate circular wavy indicator', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: M3ECircularWavyProgressIndicator(value: 0.6)),
+          home: Scaffold(body: M3ECircularProgressIndicator(value: 0.6)),
         ),
       );
 
-      expect(find.byType(M3ECircularWavyProgressIndicator), findsOneWidget);
+      expect(find.byType(M3ECircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders indeterminate circular wavy indicator', (
@@ -192,11 +192,11 @@ void main() {
     ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(body: M3ECircularWavyProgressIndicator(value: null)),
+          home: Scaffold(body: M3ECircularProgressIndicator(value: null)),
         ),
       );
 
-      expect(find.byType(M3ECircularWavyProgressIndicator), findsOneWidget);
+      expect(find.byType(M3ECircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders in RTL mode', (tester) async {
@@ -205,13 +205,13 @@ void main() {
           home: Scaffold(
             body: Directionality(
               textDirection: TextDirection.rtl,
-              child: M3ECircularWavyProgressIndicator(value: 0.6),
+              child: M3ECircularProgressIndicator(value: 0.6),
             ),
           ),
         ),
       );
 
-      expect(find.byType(M3ECircularWavyProgressIndicator), findsOneWidget);
+      expect(find.byType(M3ECircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets(
@@ -220,7 +220,7 @@ void main() {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
-              body: M3ECircularWavyProgressIndicator(
+              body: M3ECircularProgressIndicator(
                 value: 0.6,
                 waveSpeed: 0.0,
               ),
@@ -228,7 +228,7 @@ void main() {
           ),
         );
 
-        expect(find.byType(M3ECircularWavyProgressIndicator), findsOneWidget);
+        expect(find.byType(M3ECircularProgressIndicator), findsOneWidget);
       },
     );
 
@@ -243,7 +243,7 @@ void main() {
                 home: Scaffold(
                   body: Column(
                     children: [
-                      M3ECircularWavyProgressIndicator(value: value),
+                      M3ECircularProgressIndicator(value: value),
                       ElevatedButton(
                         onPressed: () => setState(() => value = 0.2),
                         child: const Text('Decrease'),
@@ -256,7 +256,7 @@ void main() {
           ),
         );
 
-        expect(find.byType(M3ECircularWavyProgressIndicator), findsOneWidget);
+        expect(find.byType(M3ECircularProgressIndicator), findsOneWidget);
 
         await tester.tap(find.text('Decrease'));
         await tester.pump(); // Start animation
@@ -265,7 +265,7 @@ void main() {
           const Duration(milliseconds: 500),
         ); // Finish progress animation
 
-        expect(find.byType(M3ECircularWavyProgressIndicator), findsOneWidget);
+        expect(find.byType(M3ECircularProgressIndicator), findsOneWidget);
       },
     );
   });

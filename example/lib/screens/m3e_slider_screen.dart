@@ -4,7 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 class M3ESliderScreen extends StatefulWidget {
   const M3ESliderScreen({super.key});

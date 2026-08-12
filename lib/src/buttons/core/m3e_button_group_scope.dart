@@ -95,10 +95,9 @@ class M3EButtonGroupItemScope extends InheritedWidget {
     required super.child,
     required this.index,
     required this.count,
-    bool? visualIsFirst,
-    bool? visualIsLast,
-  }) : _visualIsFirst = visualIsFirst,
-       _visualIsLast = visualIsLast;
+    this._visualIsFirst,
+    this._visualIsLast,
+  });
 
   final bool? _visualIsFirst;
   final bool? _visualIsLast;

@@ -4,10 +4,8 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/material.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:motor/motor.dart';
-
-import '../style/m3e_button_enums.dart';
-import '../../common/m3e_common.dart';
 
 /// Shared lifecycle infrastructure for [M3EButton] and [M3EToggleButton].
 ///
@@ -140,16 +138,7 @@ mixin M3EBaseButtonState<T extends StatefulWidget> on State<T> {
   }
 
   void updateLabelStyle(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-    final base = switch (buttonSize.name) {
-      'xs' => tt.labelSmall ?? const TextStyle(fontSize: 11),
-      'sm' => tt.labelMedium ?? const TextStyle(fontSize: 12),
-      'md' => tt.labelLarge ?? const TextStyle(fontSize: 14),
-      'lg' => tt.titleMedium ?? const TextStyle(fontSize: 16),
-      'xl' => tt.titleLarge ?? const TextStyle(fontSize: 22),
-      _ => tt.labelLarge ?? const TextStyle(fontSize: 14),
-    };
-    labelStyle = base.copyWith(overflow: TextOverflow.ellipsis);
+    labelStyle = M3EButtonTokensAdapter(context).getLabelStyle(buttonSize);
   }
 
   void updateSpringMotion() {

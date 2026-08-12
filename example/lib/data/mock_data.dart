@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared swipe style

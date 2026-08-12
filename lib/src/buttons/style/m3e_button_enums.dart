@@ -23,6 +23,29 @@ enum M3EButtonStyle {
 
   /// Subdued background color, medium prominence.
   tonal,
+
+  /// Used only for icon buttons, no background
+  standard,
+}
+
+/// Standard width options for [M3EIconButton] and [M3EToggleIconButton]
+///
+/// Used by [M3EIconButton] and [M3EToggleIconButton] to control the button's
+/// width. [narrow] produces a vertical pill shape, default [standard] a normal circle
+/// and [wide] a horizontal pill shape
+///
+/// See also:
+/// - [M3EIconButton] for the standard icon button widget
+/// - [M3EToggleIconButton] for the toggleable icon button widget
+enum M3EIconButtonWidth {
+  /// Will produce a vertical pill shape
+  narrow,
+
+  /// Default, will produce a circular icon button
+  standard,
+
+  /// Will produce a horizontal pill shape
+  wide,
 }
 
 /// Overall corner-radius strategy for buttons.

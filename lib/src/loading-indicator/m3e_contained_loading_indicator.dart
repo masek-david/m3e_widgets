@@ -4,7 +4,8 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/material.dart';
-import 'package:m3e_core/src/shapes/enums/shapes.dart';
+import 'package:m3e_widgets/src/shapes/enums/shapes.dart';
+
 import 'm3e_loading_indicator.dart';
 
 /// A Material Design contained loading indicator.

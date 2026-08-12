@@ -4,22 +4,23 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/material.dart';
+import 'package:m3e_widgets/src/buttons/internal/new_ink_sparkle.dart';
 import 'package:motor/motor.dart';
 
-import '../../internal/_tokens_adapter.dart';
-import '../../internal/_button_motion.dart';
-import '../../internal/m3e_base_button_state.dart';
 import '../../../common/m3e_common.dart';
+import '../../internal/_button_motion.dart';
+import '../../internal/_tokens_adapter.dart';
+import '../../internal/button_constants.dart';
+import '../../internal/m3e_base_button_state.dart';
 import '../../style/button_tokens_adapter.dart';
 import '../../style/m3e_button_decoration.dart';
 import '../../style/m3e_button_enums.dart';
-import '../../internal/button_constants.dart';
 
 const Alignment _kAlignmentCenter = Alignment.center;
 const VisualDensity _kVisualDensityStandard = VisualDensity.standard;
 const Duration _kDurationZero = Duration.zero;
 const InteractiveInkFeatureFactory _kDefaultSplashFactory =
-    InkRipple.splashFactory;
+    NewInkSparkle.splashFactory;
 const bool _kDefaultEnableFeedback = true;
 const double _kLabelSlideDistance = 10.0;
 final SpringMotion _kPressedRadiusMotion = M3EMotion.expressiveEffectsFast
@@ -63,7 +64,8 @@ class M3EToggleButton extends StatefulWidget {
     this.onHover,
     this.enableFeedback = _kDefaultEnableFeedback,
     this.splashFactory,
-  });
+  }) : assert(style != .text);
+
 
   /// Icon displayed in the unchecked state.
   final Widget? icon;
@@ -438,9 +440,11 @@ class _M3EToggleButtonState extends State<M3EToggleButton>
     final buttonShape = WidgetStateProperty.all<OutlinedBorder>(
       RoundedRectangleBorder(borderRadius: animatedRadius),
     );
-    final padding = WidgetStateProperty.all<EdgeInsetsGeometry>(
-      internalPadding,
-    );
+    final padding = widget.decoration?.padding != null
+        ? WidgetStateProperty.all<EdgeInsetsGeometry>(
+            widget.decoration!.padding!,
+          )
+        : WidgetStateProperty.all<EdgeInsetsGeometry>(internalPadding);
 
     final style = _buildButtonStyle(checked, buttonShape, padding);
 
@@ -510,6 +514,18 @@ class _M3EToggleButtonState extends State<M3EToggleButton>
           onFocusChange: widget.onFocusChange,
           child: content,
         );
+      case M3EButtonStyle.standard:
+        button = TextButton(
+          style: style,
+          onPressed: onPressed,
+          onLongPress: widget.enabled ? widget.onLongPress : null,
+          onHover: widget.onHover,
+          statesController: statesController,
+          focusNode: effectiveFocusNode,
+          autofocus: widget.autofocus,
+          onFocusChange: widget.onFocusChange,
+          child: content,
+        );
     }
 
     Widget result = button;
@@ -560,10 +576,15 @@ class _M3EToggleButtonState extends State<M3EToggleButton>
         bgColor = Colors.transparent;
         fgColor = checked ? cs.primary : cs.onSurface;
         break;
+
+      case M3EButtonStyle.standard:
+        bgColor = Colors.transparent;
+        fgColor = checked ? cs.primary : cs.onSurface;
+        break;
     }
 
     final bool transparent =
-        (widget.style == M3EButtonStyle.outlined && !checked) ||
+        // (widget.style == M3EButtonStyle.outlined && !checked) ||
         widget.style == M3EButtonStyle.text;
 
     return ButtonStyle(
@@ -624,7 +645,7 @@ class _M3EToggleButtonState extends State<M3EToggleButton>
           if (s != null) return s;
         }
         final isOutlined = widget.style == M3EButtonStyle.outlined;
-        if (!isOutlined) return BorderSide.none;
+        if (!isOutlined || checked) return BorderSide.none;
 
         if (states.contains(WidgetState.disabled)) {
           return BorderSide(
@@ -649,9 +670,21 @@ class _M3EToggleButtonState extends State<M3EToggleButton>
       }),
       animationDuration: _kDurationZero,
       visualDensity: _kVisualDensityStandard,
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      // EDIT it SHOULD have the padded look
+      // tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       splashFactory: widget.splashFactory ?? _kDefaultSplashFactory,
-      overlayColor: widget.decorationOverlayColor,
+      overlayColor: WidgetStateProperty.resolveWith((states) {
+        final activeStates = checked
+            ? {...states, WidgetState.selected}
+            : states;
+
+        if (widget.decorationOverlayColor != null) {
+          final color = widget.decorationOverlayColor!.resolve(activeStates);
+          if (color != null) return color;
+        }
+
+        return fgColor.withValues(alpha: ButtonConstants.kStateLayerOpacity);
+      }),
       surfaceTintColor: widget.decorationSurfaceTintColor,
       enableFeedback: widget.enableFeedback,
     );
@@ -759,14 +792,12 @@ class _M3EToggleButtonState extends State<M3EToggleButton>
         if (!constraints.hasBoundedWidth) {
           return naturalRow;
         }
-        return SizedBox(
-          height: m.height,
-          child: FittedBox(
-            fit: BoxFit.none,
-            alignment: _kAlignmentCenter,
-            clipBehavior: Clip.hardEdge,
-            child: naturalRow,
-          ),
+        // Edit remove sizedbox with height
+        return FittedBox(
+          fit: BoxFit.none,
+          alignment: _kAlignmentCenter,
+          clipBehavior: Clip.hardEdge,
+          child: naturalRow,
         );
       },
     );

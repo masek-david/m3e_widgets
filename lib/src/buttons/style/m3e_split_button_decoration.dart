@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../common/m3e_common.dart';
-import 'm3e_button_decoration.dart';
-import 'm3e_button_enums.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 
 /// Menu presentation style used by [M3ESplitButtonDecoration.menuStyle].
 enum SplitButtonMenuStyle {
@@ -34,7 +31,7 @@ class M3ESplitButtonPopupDecoration {
   const M3ESplitButtonPopupDecoration({
     this.backgroundColor,
     this.elevation,
-    this.borderRadius,
+    this.backgroundBorderRadius,
     this.border,
     this.offset = const Offset(0, 4),
     this.minWidth = 120,
@@ -42,13 +39,19 @@ class M3ESplitButtonPopupDecoration {
     this.maxHeight = 400,
     this.padding,
     this.motion = M3EMotion.standardPopup,
-    this.selectedColor,
+    this.foregroundColor,
+    this.selectedBackgroundColor,
+    this.selectedForegroundColor,
     this.selectedBorderRadius,
+    this.borderRadius,
   });
 
   final Color? backgroundColor;
+  final Color? selectedBackgroundColor;
+  final Color? foregroundColor;
+  final Color? selectedForegroundColor;
   final double? elevation;
-  final BorderRadius? borderRadius;
+  final BorderRadius? backgroundBorderRadius;
   final Border? border;
   final Offset offset;
   final double minWidth;
@@ -56,13 +59,13 @@ class M3ESplitButtonPopupDecoration {
   final double maxHeight;
   final EdgeInsetsGeometry? padding;
   final M3EMotion motion;
-  final Color? selectedColor;
+  final BorderRadius? borderRadius;
   final BorderRadius? selectedBorderRadius;
 
   M3ESplitButtonPopupDecoration copyWith({
     Color? backgroundColor,
     double? elevation,
-    BorderRadius? borderRadius,
+    BorderRadius? backgroundBorderRadius,
     Border? border,
     Offset? offset,
     double? minWidth,
@@ -71,12 +74,16 @@ class M3ESplitButtonPopupDecoration {
     EdgeInsetsGeometry? padding,
     M3EMotion? motion,
     Color? selectedColor,
+    Color? selectedBackgroundColor,
+    Color? foregroundColor,
+    Color? selectedForegroundColor,
+    BorderRadius? borderRadius,
     BorderRadius? selectedBorderRadius,
   }) {
     return M3ESplitButtonPopupDecoration(
       backgroundColor: backgroundColor ?? this.backgroundColor,
       elevation: elevation ?? this.elevation,
-      borderRadius: borderRadius ?? this.borderRadius,
+      backgroundBorderRadius: backgroundBorderRadius ?? backgroundBorderRadius,
       border: border ?? this.border,
       offset: offset ?? this.offset,
       minWidth: minWidth ?? this.minWidth,
@@ -84,8 +91,13 @@ class M3ESplitButtonPopupDecoration {
       maxHeight: maxHeight ?? this.maxHeight,
       padding: padding ?? this.padding,
       motion: motion ?? this.motion,
-      selectedColor: selectedColor ?? this.selectedColor,
-      selectedBorderRadius: selectedBorderRadius ?? this.selectedBorderRadius,
+      borderRadius: borderRadius ?? this.borderRadius,
+      selectedForegroundColor:
+          selectedForegroundColor ?? this.selectedForegroundColor,
+      foregroundColor: foregroundColor ?? this.foregroundColor,
+      selectedBackgroundColor:
+          selectedBackgroundColor ?? this.selectedBackgroundColor,
+      selectedBorderRadius: selectedBorderRadius ?? selectedBorderRadius,
     );
   }
 
@@ -95,21 +107,26 @@ class M3ESplitButtonPopupDecoration {
       other is M3ESplitButtonPopupDecoration &&
           backgroundColor == other.backgroundColor &&
           elevation == other.elevation &&
-          borderRadius == other.borderRadius &&
+          backgroundBorderRadius == other.backgroundBorderRadius &&
           border == other.border &&
+          borderRadius == other.borderRadius &&
           offset == other.offset &&
           minWidth == other.minWidth &&
           maxWidth == other.maxWidth &&
           maxHeight == other.maxHeight &&
           padding == other.padding &&
           motion == other.motion &&
-          selectedColor == other.selectedColor &&
+          foregroundColor == other.foregroundColor &&
+          backgroundColor == other.backgroundColor &&
+          selectedForegroundColor == other.selectedForegroundColor &&
+          selectedBackgroundColor == other.selectedBackgroundColor &&
           selectedBorderRadius == other.selectedBorderRadius;
 
   @override
   int get hashCode => Object.hash(
     backgroundColor,
     elevation,
+    backgroundBorderRadius,
     borderRadius,
     border,
     offset,
@@ -118,7 +135,10 @@ class M3ESplitButtonPopupDecoration {
     maxHeight,
     padding,
     motion,
-    selectedColor,
+    selectedForegroundColor,
+    selectedBackgroundColor,
+    foregroundColor,
+    backgroundColor,
     selectedBorderRadius,
   );
 }

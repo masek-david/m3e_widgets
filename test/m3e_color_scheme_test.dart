@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
-import 'package:m3e_core/m3e_core.dart';
 
 void main() {
   group('M3EColorScheme tests', () {
@@ -48,7 +48,7 @@ void main() {
         equals(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
       );
       expect(
-        scheme.background.toARGB32(),
+        scheme.surface.toARGB32(),
         equals(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
       );
       expect(
@@ -60,7 +60,7 @@ void main() {
         equals(MaterialDynamicColors.surfaceDim.getArgb(dynamicScheme)),
       );
       expect(
-        scheme.surfaceVariant.toARGB32(),
+        scheme.surfaceContainerHighest.toARGB32(),
         equals(MaterialDynamicColors.surfaceVariant.getArgb(dynamicScheme)),
       );
       expect(
@@ -156,7 +156,7 @@ void main() {
         equals(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
       );
       expect(
-        scheme.background.toARGB32(),
+        scheme.surface.toARGB32(),
         equals(MaterialDynamicColors.surface.getArgb(dynamicScheme)),
       );
       expect(
@@ -168,7 +168,7 @@ void main() {
         equals(MaterialDynamicColors.surfaceDim.getArgb(dynamicScheme)),
       );
       expect(
-        scheme.surfaceVariant.toARGB32(),
+        scheme.surfaceContainerHighest.toARGB32(),
         equals(MaterialDynamicColors.surfaceVariant.getArgb(dynamicScheme)),
       );
       expect(
@@ -290,7 +290,7 @@ void main() {
         equals(MaterialDynamicColors.surfaceDim.getArgb(dynamicScheme)),
       );
       expect(
-        scheme.surfaceVariant.toARGB32(),
+        scheme.surfaceContainerHighest.toARGB32(),
         equals(MaterialDynamicColors.surfaceVariant.getArgb(dynamicScheme)),
       );
       expect(

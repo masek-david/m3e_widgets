@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:m3e_core/m3e_core.dart';
+import 'package:m3e_widgets/m3e_widgets.dart';
+
 import '../data/mock_data.dart';
 
 class DropdownM3EScreen extends StatefulWidget {

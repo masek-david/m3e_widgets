@@ -4,7 +4,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import 'package:flutter/scheduler.dart';
-import 'package:m3e_core/src/buttons/internal/button_constants.dart';
+import 'package:m3e_widgets/src/buttons/internal/button_constants.dart';
 
 class PressTracker {
   int? _pressedIndex;
