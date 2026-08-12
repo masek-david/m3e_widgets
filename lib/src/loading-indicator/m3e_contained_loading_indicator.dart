@@ -66,7 +66,7 @@ class M3EContainedLoadingIndicator extends StatelessWidget {
     final Color effectiveIndicatorColor =
         indicatorColor ?? theme.colorScheme.onPrimaryContainer;
     final EdgeInsetsGeometry effectivePadding =
-        padding ?? const EdgeInsets.all(8.0);
+        padding ?? const EdgeInsets.all(0);
 
     final resolvedPadding = effectivePadding.resolve(
       Directionality.maybeOf(context),
