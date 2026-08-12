@@ -195,8 +195,8 @@ class M3EIconToggleButton extends StatelessWidget {
 }
 
 /// A filled-style M3EIconToggleButton.
-class M3EFilledIconButton extends M3EIconToggleButton {
-  const M3EFilledIconButton({
+class M3EFilledIconToggleButton extends M3EIconToggleButton {
+  const M3EFilledIconToggleButton({
     super.key,
     required super.onCheckedChange,
     required super.icon,
@@ -223,7 +223,7 @@ class M3EFilledIconButton extends M3EIconToggleButton {
     super.width,
   }) : super(style: M3EButtonStyle.filled);
 
-  const M3EFilledIconButton.tonal({
+  const M3EFilledIconToggleButton.tonal({
     super.key,
     required super.onCheckedChange,
     required super.icon,
@@ -252,8 +252,8 @@ class M3EFilledIconButton extends M3EIconToggleButton {
 }
 
 /// A outlined-style M3EIconToggleButton.
-class M3EOutlinedIconButton extends M3EIconToggleButton {
-  const M3EOutlinedIconButton({
+class M3EOutlinedIconToggleButton extends M3EIconToggleButton {
+  const M3EOutlinedIconToggleButton({
     super.key,
     required super.onCheckedChange,
     required super.icon,
