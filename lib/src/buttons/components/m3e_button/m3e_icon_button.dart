@@ -197,6 +197,7 @@ class M3EFilledIconButton extends M3EIconButton {
     super.onHover,
     super.enableFeedback,
     super.splashFactory,
+    super.width,
   }) : super(style: M3EButtonStyle.filled);
 
   const M3EFilledIconButton.tonal({
@@ -218,6 +219,7 @@ class M3EFilledIconButton extends M3EIconButton {
     super.onHover,
     super.enableFeedback,
     super.splashFactory,
+    super.width,
   }) : super(style: M3EButtonStyle.tonal);
 }
 
@@ -242,5 +244,6 @@ class M3EOutlinedIconButton extends M3EIconButton {
     super.onHover,
     super.enableFeedback,
     super.splashFactory,
+    super.width,
   }) : super(style: M3EButtonStyle.outlined);
 }

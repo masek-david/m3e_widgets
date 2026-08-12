@@ -244,7 +244,7 @@ class ExampleHomePage extends StatelessWidget {
             onPressed: () => _showThemeSettings(context),
             tooltip: 'Theme Customizer',
           ),
-          M3EToggleIconButton(
+          M3EIconToggleButton(
             checked: Theme.of(context).brightness == Brightness.light,
             icon: Icon(Icons.dark_mode),
             checkedIcon: Icon(Icons.light_mode),

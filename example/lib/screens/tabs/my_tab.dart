@@ -171,7 +171,7 @@ class _MyTabState extends State<MyTab> {
                   spacing: 8,
                   children: List.generate(
                     sizes.length,
-                    (index) => M3EToggleIconButton(
+                    (index) => M3EIconToggleButton(
                       width: iconWidth[iconWidthIndex],
                       size: sizes[index],
                       checked: toggled,

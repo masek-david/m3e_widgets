@@ -5,8 +5,8 @@ import 'package:m3e_widgets/m3e_widgets.dart';
 
 const bool _kDefaultEnableFeedback = true;
 
-class M3EToggleIconButton extends StatelessWidget {
-  const M3EToggleIconButton({
+class M3EIconToggleButton extends StatelessWidget {
+  const M3EIconToggleButton({
     this.width = .standard,
     super.key,
     this.onCheckedChange,
@@ -192,4 +192,91 @@ class M3EToggleIconButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A filled-style M3EIconToggleButton.
+class M3EFilledIconButton extends M3EIconToggleButton {
+  const M3EFilledIconButton({
+    super.key,
+    required super.onCheckedChange,
+    required super.icon,
+    super.size,
+    super.checked,
+    super.enabled,
+    super.statesController,
+    super.decoration,
+    super.focusNode,
+    super.autofocus,
+    super.onFocusChange,
+    super.semanticLabel,
+    super.tooltip,
+    super.mouseCursor,
+    super.onLongPress,
+    super.onHover,
+    super.enableFeedback,
+    super.splashFactory,
+    super.checkedIcon,
+    super.isFirstInGroup,
+    super.isGroupConnected,
+    super.isLastInGroup,
+    super.isStandalone,
+    super.width,
+  }) : super(style: M3EButtonStyle.filled);
+
+  const M3EFilledIconButton.tonal({
+    super.key,
+    required super.onCheckedChange,
+    required super.icon,
+    super.size,
+    super.checked,
+    super.enabled,
+    super.statesController,
+    super.decoration,
+    super.focusNode,
+    super.autofocus,
+    super.onFocusChange,
+    super.semanticLabel,
+    super.tooltip,
+    super.mouseCursor,
+    super.onLongPress,
+    super.onHover,
+    super.enableFeedback,
+    super.splashFactory,
+    super.checkedIcon,
+    super.isFirstInGroup,
+    super.isGroupConnected,
+    super.isLastInGroup,
+    super.isStandalone,
+    super.width,
+  }) : super(style: M3EButtonStyle.tonal);
+}
+
+/// A outlined-style M3EIconToggleButton.
+class M3EOutlinedIconButton extends M3EIconToggleButton {
+  const M3EOutlinedIconButton({
+    super.key,
+    required super.onCheckedChange,
+    required super.icon,
+    super.size,
+    super.checked,
+    super.enabled,
+    super.statesController,
+    super.decoration,
+    super.focusNode,
+    super.autofocus,
+    super.onFocusChange,
+    super.semanticLabel,
+    super.tooltip,
+    super.mouseCursor,
+    super.onLongPress,
+    super.onHover,
+    super.enableFeedback,
+    super.splashFactory,
+    super.checkedIcon,
+    super.isFirstInGroup,
+    super.isGroupConnected,
+    super.isLastInGroup,
+    super.isStandalone,
+    super.width,
+  }) : super(style: M3EButtonStyle.outlined);
 }
