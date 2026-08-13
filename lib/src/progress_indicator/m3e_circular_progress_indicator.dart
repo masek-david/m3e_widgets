@@ -14,8 +14,15 @@ class _Defaults {
   static const minSize = 24.0;
   static const maxSize = 240.0;
 
+  /// This value is for default size, it is scaled by default for bigger size
   static const defaultThickness = 4.0;
+
+  /// This value is for default size, it is scaled by default for bigger size
   static const defaultGapSize = 4.0;
+
+  /// This value is for default size, it is scaled by default for bigger size
+  static const defaultWavelength = 15.0;
+
   static double Function(double progress) defaultAmplitude = (progress) {
     // Sets the amplitude to the max on 10%, and back to zero on 95% of the progress.
     if (progress <= 0.1 || progress >= 0.95) {
@@ -24,7 +31,6 @@ class _Defaults {
       return 1;
     }
   };
-  static const defaultWavelength = 15.0;
   static const amplitudeAnimationDuration = Duration(milliseconds: 500);
   static const amplitudeAnimationIncreaseCurve = Easing.standard;
   static const amplitudeAnimationDecreaseCurve = Easing.emphasizedAccelerate;
@@ -44,10 +50,10 @@ class M3ECircularProgressIndicator extends StatelessWidget {
     this.value,
     this.activeColor,
     this.trackColor,
-    this.gapSize = _Defaults.defaultGapSize,
-    this.thickness = _Defaults.defaultThickness,
-    this.wavelength = _Defaults.defaultWavelength,
-    this.waveSpeed = _Defaults.defaultWavelength,
+    this.gapSize,
+    this.thickness,
+    this.wavelength,
+    this.waveSpeed,
     this.amplitude,
     this.size,
     this.shape = .wavy,
@@ -56,50 +62,84 @@ class M3ECircularProgressIndicator extends StatelessWidget {
          (size ?? 24) >= _Defaults.minSize && (size ?? 24) <= _Defaults.maxSize,
        );
 
+  /// The value of the progress (0 -> 1)
   final double? value;
+
+  /// This function should return 0 or 1 based on the current progress, this will animate the amplitude of the wave
+  ///
+  /// For [M3EProgressIndicatorShape.flat] it is by default always 0
   final double Function(double progress)? amplitude;
-  final double thickness;
-  final double wavelength;
+
+  /// The thickness of the progress and track paths
+  ///
+  /// Default: `4.0` for default size
+  final double? thickness;
+
+  /// The wavelength of the waves - from this the number of points in the star is computed
+  ///
+  /// Default: `15.0` for default size
+  final double? wavelength;
 
   /// By default the same as [wavelength] -> it takes 1 second to travel 1 wave
-  final double waveSpeed;
+  ///
+  /// Default: `15.0` for default size
+  final double? waveSpeed;
   final double? size;
-  final double gapSize;
+
+  /// The gap between progress and track paths
+  ///
+  /// Default: `4.0` for default size
+  final double? gapSize;
+
+  /// The color of the progress path
   final Color? activeColor;
+
+  /// The color of the track path
   final Color? trackColor;
-  // The progress will be animated = won't jump the values but animate between them
+
+  /// Whether the progress should animate = won't jump the values but animate between them
   final bool animateProgres;
   final M3EProgressIndicatorShape shape;
 
   @override
   Widget build(BuildContext context) {
     final isWavy = shape == .wavy;
-    final finalSize =
-        size ?? (isWavy ? _Defaults.defaultWavySize : _Defaults.defaultSize);
+    final defaultSize = isWavy
+        ? _Defaults.defaultWavySize
+        : _Defaults.defaultSize;
+
+    final finalSize = size ?? defaultSize;
     final finalAmplitude =
         amplitude ?? (isWavy ? _Defaults.defaultAmplitude : (_) => 0);
+    final finalWavelength =
+        wavelength ?? finalSize * (_Defaults.defaultWavelength / defaultSize);
+    final finalWaveSpeed = waveSpeed ?? finalWavelength;
+    final finalThickness =
+        thickness ?? finalSize * (_Defaults.defaultThickness / defaultSize);
+    final finalGapSize =
+        gapSize ?? finalSize * (_Defaults.defaultGapSize / defaultSize);
 
     if (value != null) {
       return _CircularProgressIndicator(
         animateProgres: animateProgres,
         value: value!,
-        wavelength: wavelength,
-        waveSpeed: waveSpeed,
+        wavelength: finalWavelength,
+        waveSpeed: finalWaveSpeed,
         trackColor: trackColor,
-        thickness: thickness,
+        thickness: finalThickness,
         size: finalSize,
-        gapSize: gapSize,
+        gapSize: finalGapSize,
         amplitude: finalAmplitude,
         activeColor: activeColor,
       );
     } else {
       return _CircularLoadingIndicator(
-        wavelength: wavelength,
-        waveSpeed: waveSpeed,
+        wavelength: finalWavelength,
+        waveSpeed: finalWaveSpeed,
         trackColor: trackColor,
-        thickness: thickness,
+        thickness: finalThickness,
         size: finalSize,
-        gapSize: gapSize,
+        gapSize: finalGapSize,
         amplitude: finalAmplitude,
         activeColor: activeColor,
       );
@@ -250,7 +290,7 @@ class _CircularProgressIndicator extends StatefulWidget {
 class _CircularProgressIndicatorState extends State<_CircularProgressIndicator>
     with TickerProviderStateMixin {
   /// The faze controller controlls how long it takes to rotate by one wave
-  late AnimationController _fazeController;
+  AnimationController? _fazeController;
   late final _amplitudeController = AnimationController(
     value: widget.amplitude(widget.value),
     vsync: this,
@@ -276,12 +316,13 @@ class _CircularProgressIndicatorState extends State<_CircularProgressIndicator>
         .clamp(50, double.infinity)
         .round();
 
+    _fazeController?.dispose();
     _fazeController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: fazeDuration),
     );
 
-    _fazeController.repeat();
+    _fazeController?.repeat();
   }
 
   @override
@@ -302,7 +343,7 @@ class _CircularProgressIndicatorState extends State<_CircularProgressIndicator>
 
   @override
   void dispose() {
-    _fazeController.dispose();
+    _fazeController?.dispose();
     _progressController.dispose();
     _amplitudeController.dispose();
     super.dispose();
@@ -351,6 +392,7 @@ class _CircularProgressIndicatorState extends State<_CircularProgressIndicator>
         oldProgress = _progressController.value;
 
         return CustomPaint(
+          // TODO overflows from this square, check gap size
           size: Size.square(widget.size),
           painter: _WavyCircularProgressIndicatorPainter(
             gapSize: widget.gapSize,
@@ -362,7 +404,7 @@ class _CircularProgressIndicatorState extends State<_CircularProgressIndicator>
             trackColor:
                 widget.trackColor ??
                 Theme.of(context).colorScheme.secondaryContainer,
-            faze: _fazeController.value,
+            faze: _fazeController!.value,
             progress: _progressController.value,
           ),
         );
@@ -473,7 +515,7 @@ class _WavyCircularProgressIndicatorPainter extends CustomPainter {
     final activePathMetrics = activePath
         .transform(
           _getTransform(
-            size.width / 2,
+            r,
             (-pi / 2) - faze * (1 / numVertices * 2 * pi) * 2,
             xCenter,
             yCenter,
@@ -494,7 +536,7 @@ class _WavyCircularProgressIndicatorPainter extends CustomPainter {
 
     final trackPath = circlePolygon.toPath();
     final trackPathMetrics = trackPath
-        .transform(_getTransform(size.width / 2, pi / -2, xCenter, yCenter))
+        .transform(_getTransform(r, pi / -2, xCenter, yCenter))
         .computeMetrics();
 
     final cutTrackPath = Path();

@@ -21,11 +21,8 @@ class M3EContainedLoadingIndicator extends StatelessWidget {
   /// If null, defaults to 16.0 on all sides.
   final EdgeInsetsGeometry? padding;
 
-  /// The width of the container. If null, it wraps the content or defaults.
-  final double? width;
-
-  /// The height of the container. If null, it wraps the content or defaults.
-  final double? height;
+  /// The size of the container. If null, it wraps the content or defaults.
+  final double? size;
 
   /// The background color of the container.
   /// If null, defaults to [ColorScheme.primaryContainer].
@@ -49,8 +46,7 @@ class M3EContainedLoadingIndicator extends StatelessWidget {
     super.key,
     this.shapes,
     this.padding,
-    this.width,
-    this.height,
+    this.size,
     this.containerColor,
     this.indicatorColor,
     this.borderRadius,
@@ -71,43 +67,51 @@ class M3EContainedLoadingIndicator extends StatelessWidget {
     final resolvedPadding = effectivePadding.resolve(
       Directionality.maybeOf(context),
     );
-    final BoxConstraints? innerConstraints = (width != null || height != null)
+    final BoxConstraints? innerConstraints = (size != null)
         ? BoxConstraints(
-            minWidth: width != null
-                ? (width! - resolvedPadding.horizontal).clamp(
-                    0,
-                    double.infinity,
-                  )
+            minWidth: size != null
+                ? (size! - resolvedPadding.horizontal).clamp(0, double.infinity)
                 : 48.0,
-            maxWidth: width != null
-                ? (width! - resolvedPadding.horizontal).clamp(
-                    0,
-                    double.infinity,
-                  )
+            maxWidth: size != null
+                ? (size! - resolvedPadding.horizontal).clamp(0, double.infinity)
                 : 48.0,
-            minHeight: height != null
-                ? (height! - resolvedPadding.vertical).clamp(0, double.infinity)
+            minHeight: size != null
+                ? (size! - resolvedPadding.vertical).clamp(0, double.infinity)
                 : 48.0,
-            maxHeight: height != null
-                ? (height! - resolvedPadding.vertical).clamp(0, double.infinity)
+            maxHeight: size != null
+                ? (size! - resolvedPadding.vertical).clamp(0, double.infinity)
                 : 48.0,
           )
         : null;
 
-    return Container(
-      width: width,
-      height: height,
-      padding: effectivePadding,
-      decoration: BoxDecoration(
-        color: effectiveContainerColor,
-        borderRadius: borderRadius ?? BorderRadius.circular(9999.0),
-      ),
-      child: M3ELoadingIndicator(
-        shapes: shapes,
-        color: effectiveIndicatorColor,
-        constraints: innerConstraints,
-        semanticsLabel: semanticsLabel,
-        semanticsValue: semanticsValue,
+    final constraints = BoxConstraints(
+      minWidth: size ?? 48,
+      maxWidth: size ?? 48,
+      maxHeight: size ?? 48,
+      minHeight: size ?? 48,
+    );
+    
+    return ConstrainedBox(
+      constraints: constraints,
+      child: Align(
+        alignment: .center,
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            padding: effectivePadding,
+            decoration: BoxDecoration(
+              color: effectiveContainerColor,
+              borderRadius: borderRadius ?? BorderRadius.circular(9999.0),
+            ),
+            child: M3ELoadingIndicator(
+              shapes: shapes,
+              color: effectiveIndicatorColor,
+              constraints: innerConstraints,
+              semanticsLabel: semanticsLabel,
+              semanticsValue: semanticsValue,
+            ),
+          ),
+        ),
       ),
     );
   }

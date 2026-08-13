@@ -7,6 +7,8 @@ library;
 
 // M3E Buttons
 export 'src/buttons/button.dart';
+// NewInkSparkle
+export 'src/buttons/internal/new_ink_sparkle.dart';
 // Non-dismissible variants (static layout).
 export 'src/card/m3e_card.dart';
 // Common components.

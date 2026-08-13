@@ -147,8 +147,7 @@ class _M3ELoadingIndicatorScreenState extends State<M3ELoadingIndicatorScreen> {
                         const Text('Custom Large'),
                         const SizedBox(height: 12),
                         M3EContainedLoadingIndicator(
-                          width: 80,
-                          height: 80,
+                          size: 80,
                           padding: const EdgeInsets.all(2),
                           containerColor: cs.tertiaryContainer,
                           indicatorColor: cs.onTertiaryContainer,
@@ -199,8 +198,7 @@ class _M3ELoadingIndicatorScreenState extends State<M3ELoadingIndicatorScreen> {
                                     'contained_${_selectedShapes.join(',')}_${_containerSize}_${_padding}_${_isFullRadius ? 'full' : _borderRadius}',
                                   ),
                                   shapes: _selectedShapes,
-                                  width: _containerSize,
-                                  height: _containerSize,
+                                  size: _containerSize,
                                   padding: EdgeInsets.all(_padding),
                                   borderRadius: _isFullRadius
                                       ? null

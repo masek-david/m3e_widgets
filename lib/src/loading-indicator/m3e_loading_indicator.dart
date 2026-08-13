@@ -112,44 +112,47 @@ class _M3ELoadingIndicatorState extends State<M3ELoadingIndicator>
       child: RepaintBoundary(
         child: ConstrainedBox(
           constraints: _constraints,
-          child: AspectRatio(
-            aspectRatio: 1.0,
-            child: AnimatedBuilder(
-              animation: Listenable.merge([
-                _morphController,
-                _globalRotationController,
-              ]),
-              builder: (context, child) {
-                final morphProgress = _morphController.value.clamp(0.0, 1.0);
-                final globalRotationDegrees =
-                    _globalRotationController.value * _fullRotation;
-
-                // calculate total rotation (clockwise, matching Kotlin implementation)
-                final totalRotationDegrees =
-                    morphProgress * _quarterRotation +
-                    _morphRotationTargetAngle +
-                    globalRotationDegrees;
-
-                final totalRotationRadians =
-                    totalRotationDegrees * (math.pi / 180.0);
-
-                return Transform.rotate(
-                  angle: totalRotationRadians,
-                  child: CustomPaint(
-                    painter: _MorphPainter(
-                      morph: _morphSequence[_currentMorphIndex],
-                      progress: morphProgress,
-                      color: _color,
-                      scaleFactor: shapesScaleFactor,
-                      repaint: Listenable.merge([
-                        _morphController,
-                        _globalRotationController,
-                      ]),
+          child: Align(
+            alignment: .center,
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: AnimatedBuilder(
+                animation: Listenable.merge([
+                  _morphController,
+                  _globalRotationController,
+                ]),
+                builder: (context, child) {
+                  final morphProgress = _morphController.value.clamp(0.0, 1.0);
+                  final globalRotationDegrees =
+                      _globalRotationController.value * _fullRotation;
+            
+                  // calculate total rotation (clockwise, matching Kotlin implementation)
+                  final totalRotationDegrees =
+                      morphProgress * _quarterRotation +
+                      _morphRotationTargetAngle +
+                      globalRotationDegrees;
+            
+                  final totalRotationRadians =
+                      totalRotationDegrees * (math.pi / 180.0);
+            
+                  return Transform.rotate(
+                    angle: totalRotationRadians,
+                    child: CustomPaint(
+                      painter: _MorphPainter(
+                        morph: _morphSequence[_currentMorphIndex],
+                        progress: morphProgress,
+                        color: _color,
+                        scaleFactor: shapesScaleFactor,
+                        repaint: Listenable.merge([
+                          _morphController,
+                          _globalRotationController,
+                        ]),
+                      ),
+                      child: const SizedBox.expand(),
                     ),
-                    child: const SizedBox.expand(),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

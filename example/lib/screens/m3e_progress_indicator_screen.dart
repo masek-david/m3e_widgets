@@ -92,16 +92,31 @@ class _M3EProgressIndicatorScreenState extends State<M3EProgressIndicatorScreen>
           M3ELinearWavyProgressIndicator(
             value: _isDeterminate ? _determinateProgress : null,
           ),
+          SizedBox(height: 16),
           Row(
-            spacing: 16,
+            spacing: 8,
             mainAxisAlignment: .center,
             children: [
-              CircularProgressIndicator(
-                value: _isDeterminate ? _determinateProgress : null,
+              // M3ECircularProgressIndicator(
+              //   shape: _isWavy ? .wavy : .flat,
+              //   value: _isDeterminate ? _determinateProgress : null,
+              // ),
+              // CircularProgressIndicator(
+              //   value: _isDeterminate ? _determinateProgress : null,
+              // ),
+              Container(
+                color: Colors.amber.withAlpha(30),
+                width: 100,
+                height: 50,
+                child: M3ELoadingIndicator(),
               ),
-              M3ECircularProgressIndicator(
-                shape: _isWavy ? .wavy : .flat,
-                value: _isDeterminate ? _determinateProgress : null,
+              M3ELoadingIndicator(),
+              M3EContainedLoadingIndicator(),
+              Container(
+                color: Colors.amber.withAlpha(30),
+                width: 100,
+                height: 80,
+                child: M3EContainedLoadingIndicator(size: 40,),
               ),
             ],
           ),
