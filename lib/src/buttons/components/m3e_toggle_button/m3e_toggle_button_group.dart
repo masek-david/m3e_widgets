@@ -53,7 +53,7 @@ class _MoveFocusIntent extends Intent {
 /// Pass [decoration] to override colors, motion, or radii for this specific
 /// button. Group-level decoration values serve as defaults; per-action decoration
 /// takes precedence.
-class M3EToggleButtonGroupAction {
+class M3EToggleButtonGroupAction { // TODO the pressed radius is wrong
   const M3EToggleButtonGroupAction({
     this.icon,
     this.checkedIcon,
@@ -753,7 +753,7 @@ class _M3EToggleButtonGroupState extends State<M3EToggleButtonGroup>
     if (!_needsDistinctCheckedMeasurement(action)) {
       return M3EToggleButton(
         key: _uncheckedKeys[index],
-        style: widget.style,
+        style: widget.style, // add style override to the action 
         size: _mapSize(widget.size, actionWidth: action.width),
         decoration: widget.decoration,
         icon: action.icon,

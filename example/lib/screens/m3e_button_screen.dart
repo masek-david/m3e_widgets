@@ -620,7 +620,6 @@ class _ToggleButtonTabState extends State<_ToggleButtonTab> {
   bool _tbsElevated = false;
   bool _tbsTonal = false;
   bool _tbsOutlined = false;
-  bool _tbsText = false;
 
   bool _tbCustomA = false;
   bool _tbCustomB = false;
@@ -745,15 +744,15 @@ class _ToggleButtonTabState extends State<_ToggleButtonTab> {
                   onCheckedChange: (v) => setState(() => _tbsOutlined = v),
                 ),
               ),
-              _Labelled(
-                'text',
-                M3ETextToggleButton(
-                  icon: const Icon(Icons.add_rounded),
-                  checkedIcon: const Icon(Icons.check_rounded),
-                  checked: _tbsText,
-                  onCheckedChange: (v) => setState(() => _tbsText = v),
-                ),
-              ),
+              // _Labelled(
+              //   'text',
+              //   M3ETextToggleButton(
+              //     icon: const Icon(Icons.add_rounded),
+              //     checkedIcon: const Icon(Icons.check_rounded),
+              //     checked: _tbsText,
+              //     onCheckedChange: (v) => setState(() => _tbsText = v),
+              //   ),
+              // ),
             ],
           ),
 

@@ -379,6 +379,7 @@ class _M3EButtonState extends State<M3EButton>
             ? Colors.transparent
             : _tokens.container(widget.style);
       }),
+      // TODO does elevation work?
       elevation: WidgetStateProperty.resolveWith((states) {
         if (dec?.elevation != null) {
           final e = dec!.elevation!.resolve(states);

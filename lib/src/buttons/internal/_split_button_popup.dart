@@ -305,13 +305,15 @@ class _PopupOverlayState<T> extends State<_PopupOverlay<T>> {
             Icon(item.icon, size: 20, color: effectiveColor),
           SizedBox(width: 8),
           if (item.label != null)
-            Text(
-              item.label!,
-              style:
-                  Theme.of(
-                    context,
-                  ).textTheme.labelLarge?.copyWith(color: effectiveColor) ??
-                  TextStyle(fontSize: 14),
+            Flexible(
+              child: Text(
+                item.label!,
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.labelLarge?.copyWith(color: effectiveColor) ??
+                    TextStyle(fontSize: 14),
+              ),
             ),
         ],
       );

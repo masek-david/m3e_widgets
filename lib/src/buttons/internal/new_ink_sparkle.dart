@@ -4,6 +4,8 @@
 
 // This file was edited by @masek-david to make it look more like native
 
+// TODO migrate to material_ui
+
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
